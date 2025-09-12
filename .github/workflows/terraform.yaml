@@ -1,0 +1,134 @@
+name: "Terraform Infrastructure Change Management Pipeline with GitHub Actions"
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - terraform/**
+  pull_request:
+    branches:
+    - main
+    paths:
+    - terraform/**
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+env:
+  # verbosity setting for Terraform logs
+  TF_LOG: INFO
+  # Credentials for deployment to Azure
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+  KEY_VAULT_NAME: ${{ secrets.KEY_VAULT_NAME }}
+
+jobs:
+  terraform-plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+        # We keep Terraform files in the terraform directory.
+        working-directory: ./terraform
+
+    steps:
+    - name: Checkout the repository to the runner
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform with specified version on the runner
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.13.2
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.ARM_CLIENT_ID }}
+        client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
+        tenant-id: ${{ secrets.ARM_TENANT_ID }}
+        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+    - name: Terraform fmt
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    - name: Write backend config
+      run: |
+        cat > backend-config.hcl <<EOF
+        resource_group_name  = "${{ secrets.AZURE_BACKEND_RG }}"
+        storage_account_name = "${{ secrets.AZURE_BACKEND_STORAGE }}"
+        container_name       = "${{ secrets.AZURE_BACKEND_CONTAINER }}"
+        key                  = "${{ secrets.AZURE_BACKEND_KEY }}"
+        EOF
+
+    - name: Fetch secrets from Key Vault
+      run: |
+        echo "resource_group_name = \"$(az keyvault secret show \
+          --vault-name $KEY_VAULT_NAME \
+          --name resource_group_name \
+          --query value -o tsv)\"" >> terraform.tfvars
+
+    - name: Terraform Init
+      id: init
+      run: terraform init -backend-config=backend-config.hcl
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+
+    - name: Terraform Plan
+      id: plan
+      #  if: github.event_name == 'pull_request'
+      run: terraform plan -no-color -input=false \
+            -var-file=env/prod.tfvars \
+            -var-file=terraform.tfvars
+      continue-on-error: true
+
+    - uses: actions/github-script@v7
+      if: github.event_name == 'pull_request'
+      env:
+        PLAN: "terraform
+
+          ${{ steps.plan.outputs.stdout }}"
+      with:
+        script: |
+          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          <details><summary>Validation Output</summary>
+
+          \`\`\`\n
+          ${{ steps.validate.outputs.stdout }}
+          \`\`\`
+
+          </details>
+
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+          <details><summary>Show Plan</summary>
+
+          \`\`\`\n
+          ${process.env.PLAN}
+          \`\`\`
+
+          </details>
+
+          *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+    - name: Terraform Plan Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
