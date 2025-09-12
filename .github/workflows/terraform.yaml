@@ -42,6 +42,10 @@ jobs:
     - name: Checkout the repository to the runner
       uses: actions/checkout@v4
 
+    - name: Debug env variable
+      run: echo "Debug env variable is ${{ secrets.DEBUG_ENV_VARIABLE }}"
+      
+
     - name: Setup Terraform with specified version on the runner
       uses: hashicorp/setup-terraform@v3
       with:
