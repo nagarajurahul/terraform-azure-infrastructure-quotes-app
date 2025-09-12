@@ -49,10 +49,8 @@ jobs:
     - name: Azure Login
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.ARM_CLIENT_ID }}
-        client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
-        tenant-id: ${{ secrets.ARM_TENANT_ID }}
-        subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
 
     - name: Terraform fmt
       id: fmt
@@ -72,7 +70,7 @@ jobs:
       run: |
         echo "resource_group_name = \"$(az keyvault secret show \
           --vault-name $KEY_VAULT_NAME \
-          --name resource_group_name \
+          --name resource-group-name \
           --query value -o tsv)\"" >> terraform.tfvars
 
     - name: Terraform Init
