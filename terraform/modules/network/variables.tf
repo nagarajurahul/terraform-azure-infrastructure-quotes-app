@@ -1,16 +1,16 @@
 variable "resource_group_name" {
-  description = "The name of the resource group"
   type        = string
+  description = "The name of the resource group"
 }
 
 variable "location" {
-  description = "The Azure location where the resource group will be created"
   type        = string
+  description = "The Azure location where the resource group will be created"
 }
 
 variable "tags" {
-  description = "A map of tags to assign"
   type        = map(string)
+  description = "A map of tags to assign"
   default     = {}
 }
 
@@ -42,8 +42,6 @@ variable "project_name" {
 variable "sku" {
   type        = string
   description = "SKU name"
-
-  default = "Standard"
 }
 
 variable "public_ip_prefix_length" {
