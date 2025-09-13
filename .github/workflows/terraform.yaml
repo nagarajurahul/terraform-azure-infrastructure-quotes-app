@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - main
+    - network
     paths:
     - terraform/**
   pull_request:
