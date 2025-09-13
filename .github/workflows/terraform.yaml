@@ -136,3 +136,73 @@ jobs:
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
+
+
+  terraform-apply:
+    name: "Terraform Apply"
+    runs-on: ubuntu-24.04
+    needs: terraform-plan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+
+    steps:
+    - name: Checkout the repository to the runner
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform with specified version on the runner
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.13.2
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        enable-AzPSSession: true
+
+    - name: Terraform fmt
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    - name: Write backend config
+      run: |
+        cat > backend-config.hcl <<EOF
+        resource_group_name  = "${{ secrets.AZURE_BACKEND_RG }}"
+        storage_account_name = "${{ secrets.AZURE_BACKEND_STORAGE }}"
+        container_name       = "${{ secrets.AZURE_BACKEND_CONTAINER }}"
+        key                  = "${{ secrets.AZURE_BACKEND_KEY }}"
+        EOF
+
+    - name: Fetch secrets from Key Vault
+      run: |
+        echo "resource_group_name = \"$(az keyvault secret show \
+          --vault-name $KEY_VAULT_NAME \
+          --name resource-group-name \
+          --query value -o tsv)\"" >> terraform.tfvars
+
+    - name: Terraform Init
+      id: init
+      run: terraform init -backend-config=backend-config.hcl
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+
+    - name: Terraform Plan
+      id: plan
+      run: |
+        terraform plan \
+          -no-color \
+          -input=false \
+          -var-file=env/prod.tfvars \
+          -var-file=terraform.tfvars
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -var-file=env/prod.tfvars -var-file=terraform.tfvars
+
