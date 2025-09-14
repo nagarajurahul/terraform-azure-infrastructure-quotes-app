@@ -5,7 +5,6 @@ environment = "prod"
 
 vnet_name           = "quotes-app-vnet-prod"
 vnet_cidr           = "10.0.0.0/16"
-environment         = "prod"
 
 subnet_cidrs = {
     web     = "10.0.1.0/24"   # 256 IPs
