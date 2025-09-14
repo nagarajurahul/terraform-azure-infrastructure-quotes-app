@@ -102,3 +102,13 @@ variable "sql_admin_password_secret_name" {
   description = "Key Vault secret name for SQL administrator password"
   type        = string
 }
+
+variable "web_app_sku_name" {
+  type        = string
+  description = "Web App SKU name"
+}
+
+variable "node_version" {
+  type        = string
+  description = "Node version for the Web App"
+}

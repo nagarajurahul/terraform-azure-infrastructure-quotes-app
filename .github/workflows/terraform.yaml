@@ -5,6 +5,7 @@ on:
     branches:
     - main
     - network
+    - app-service
     - sql
     paths:
     - terraform/**

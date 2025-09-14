@@ -52,3 +52,18 @@ module "sql" {
   vnet_id   = module.network.vnet_id
   subnet_id = module.network.subnet_ids["db"]
 }
+
+module "app_service" {
+  source = "./modules/app-service"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = var.tags
+  project_name        = var.project_name
+  environment         = var.environment
+  subnet_id           = module.network.subnet_ids["app"]
+  web_app_sku_name    = var.web_app_sku_name
+  node_version        = var.node_version
+
+}
+

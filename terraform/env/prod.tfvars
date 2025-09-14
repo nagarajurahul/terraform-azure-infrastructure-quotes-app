@@ -18,10 +18,12 @@ sku                     = "Standard"
 public_ip_prefix_length = 31
 public_ip_prefix_zones  = ["1", "2", "3"]
 
-
 sql_server_version       = "12.0"
 sql_database_max_size_gb = 0.5
 sql_database_sku         = "Basic"
 
 sql_admin_login_secret_name    = "SQL-QUOTES-APP-PROD-ADMIN-LOGIN"
 sql_admin_password_secret_name = "SQL-QUOTES-APP-PROD-ADMIN-PASSWORD"
+
+web_app_sku_name = "F1"
+node_version     = "22-lts"
