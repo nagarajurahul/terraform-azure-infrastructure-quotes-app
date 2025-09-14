@@ -6,9 +6,9 @@ resource "azurerm_service_plan" "service_plan" {
   os_type             = "Linux"
   sku_name            = var.web_app_sku_name
 
-  premium_plan_auto_scale_enabled = true
-  per_site_scaling_enabled        = true
-  zone_balancing_enabled          = true
+  # premium_plan_auto_scale_enabled = true
+  # per_site_scaling_enabled        = true
+  # zone_balancing_enabled          = true
   # worker_count= 6
 }
 
