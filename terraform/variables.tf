@@ -141,3 +141,34 @@ variable "application_gateway_max_capacity" {
 
   default = 10
 }
+
+variable "custom_domain_name" {
+  type        = string
+  description = "Domain name"
+}
+
+variable "org_name" {
+  type        = string
+  description = "Organisation name"
+}
+
+variable "certificate_key_vault_name" {
+  type        = string
+  description = "Name of the key vault where certificate needs to reside"
+}
+
+variable "certificate_key_vault_resource_group_name" {
+  type        = string
+  description = "Name of the key vault - resource group where certificate needs to reside"
+}
+
+variable "identity_resource_group_name" {
+  type        = string
+  description = "Name of the resource group where identity resides"
+}
+
+variable "key_vault_ssl_certificate_secret_name" {
+  type        = string
+  description = "Secret name in Key Vault where certificate resides"
+  default     = ""
+}

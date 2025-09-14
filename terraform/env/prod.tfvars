@@ -32,3 +32,6 @@ application_gateway_sku_name     = "Basic"
 application_gateway_sku_tier     = "Basic"
 application_gateway_min_capacity = 1
 application_gateway_max_capacity = 2
+
+custom_domain_name                        = "quotesapp.com"
+org_name                                  = "Our Org"

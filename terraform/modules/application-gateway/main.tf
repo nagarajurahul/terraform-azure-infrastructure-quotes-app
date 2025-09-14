@@ -18,6 +18,8 @@ locals {
 }
 
 resource "azurerm_application_gateway" "application_gateway" {
+  depends_on = [ azurerm_role_assignment.appgw_kv_secret_access ]
+
   name                = "appgateway-${var.project_name}"
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -37,6 +39,16 @@ resource "azurerm_application_gateway" "application_gateway" {
   tags         = var.tags
   enable_http2 = true
 
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.appgw_identity.id]
+  }
+
+  ssl_certificate {
+    name                = "appgateway-cert-${var.project_name}"
+    key_vault_secret_id = var.key_vault_ssl_certificate_secret_id
+  }
+
   gateway_ip_configuration {
     name      = "ip-configuration-appgateway-${var.project_name}"
     subnet_id = var.application_gateway_subnet_id
@@ -44,7 +56,7 @@ resource "azurerm_application_gateway" "application_gateway" {
 
   frontend_port {
     name = local.frontend_port_name
-    port = 80
+    port = 443
   }
 
   frontend_ip_configuration {
@@ -73,7 +85,8 @@ resource "azurerm_application_gateway" "application_gateway" {
     frontend_ip_configuration_name = local.frontend_ip_configuration_name
     frontend_port_name             = local.frontend_port_name
     protocol                       = "Https"
-    ssl_certificate_name           = "cert-appgateway-${var.project_name}"
+    ssl_certificate_name           = "appgateway-cert-${var.project_name}"
+    host_name                      = var.custom_domain_name
   }
 
   request_routing_rule {

@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.44.0"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.1.0"
+    }
+  }
+}
+
 provider "azurerm" {
   features {}
 }
@@ -67,9 +80,21 @@ module "app_service" {
 
 }
 
+module "certificate" {
+  source = "./modules/certificate"
+
+  custom_domain_name                        = var.custom_domain_name
+  org_name                                  = var.org_name
+  certificate_key_vault_name                = var.certificate_key_vault_name
+  certificate_key_vault_resource_group_name = var.certificate_key_vault_resource_group_name
+  project_name                              = var.project_name
+  tags                                      = var.tags
+}
 
 module "application_gateway" {
   source = "./modules/application-gateway"
+
+  depends_on = [module.network, module.certificate]
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -88,4 +113,10 @@ module "application_gateway" {
   application_gateway_min_capacity = var.application_gateway_min_capacity
   application_gateway_max_capacity = var.application_gateway_max_capacity
 
+  certificate_key_vault_name                = var.certificate_key_vault_name
+  certificate_key_vault_resource_group_name = var.certificate_key_vault_resource_group_name
+  identity_resource_group_name              = var.identity_resource_group_name
+
+  key_vault_ssl_certificate_secret_id = module.certificate.key_vault_ssl_certificate_secret_id
+  custom_domain_name                  = var.custom_domain_name
 }
