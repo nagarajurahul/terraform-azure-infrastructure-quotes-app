@@ -25,5 +25,5 @@ sql_database_sku         = "Basic"
 sql_admin_login_secret_name    = "SQL-QUOTES-APP-PROD-ADMIN-LOGIN"
 sql_admin_password_secret_name = "SQL-QUOTES-APP-PROD-ADMIN-PASSWORD"
 
-web_app_sku_name = "F1"
+web_app_sku_name = "B2"
 node_version     = "22-lts"

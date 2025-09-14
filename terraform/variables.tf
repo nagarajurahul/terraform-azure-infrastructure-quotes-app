@@ -106,6 +106,7 @@ variable "sql_admin_password_secret_name" {
 variable "web_app_sku_name" {
   type        = string
   description = "Web App SKU name"
+  default     = "P5mv4"
 }
 
 variable "node_version" {
