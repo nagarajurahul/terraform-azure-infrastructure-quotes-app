@@ -31,6 +31,9 @@ resource "azurerm_mssql_server" "sql_server" {
   #   connection_policy                        = "Default"
 }
 
+# https://learn.microsoft.com/en-us/azure/azure-sql/database/resource-limits-vcore-single-databases?view=azuresql
+# Mainly designed for provisioned database for high speed PII workloads
+
 resource "azurerm_mssql_database" "sql_database" {
   name         = "sqldb-${var.project_name}-${var.environment}"
   server_id    = azurerm_mssql_server.sql_server.id
