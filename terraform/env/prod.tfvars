@@ -27,3 +27,8 @@ sql_admin_password_secret_name = "SQL-QUOTES-APP-PROD-ADMIN-PASSWORD"
 
 web_app_sku_name = "B2"
 node_version     = "22-lts"
+
+application_gateway_sku_name     = "Basic"
+application_gateway_sku_tier     = "Basic"
+application_gateway_min_capacity = 1
+application_gateway_max_capacity = 2

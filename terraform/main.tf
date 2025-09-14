@@ -83,4 +83,9 @@ module "application_gateway" {
 
   # backend_private_dns_address = module.app_service.backend_private_dns_address
 
+  application_gateway_sku_name     = var.application_gateway_sku_name
+  application_gateway_sku_tier     = var.application_gateway_sku_tier
+  application_gateway_min_capacity = var.application_gateway_min_capacity
+  application_gateway_max_capacity = var.application_gateway_max_capacity
+
 }

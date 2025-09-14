@@ -37,3 +37,31 @@ variable "backend_private_dns_address" {
   type        = string
   description = "Private DNS Address of the App Service"
 }
+
+variable "application_gateway_sku_name" {
+  type        = string
+  description = "SKU name for the Application Gateway"
+
+  default = "WAF_v2"
+}
+
+variable "application_gateway_sku_tier" {
+  type        = string
+  description = "SKU tier for the Application Gateway"
+
+  default = "WAF_v2"
+}
+
+variable "application_gateway_min_capacity" {
+  type        = number
+  description = "Minimum capacity for the Application Gateway"
+
+  default = 2
+}
+
+variable "application_gateway_max_capacity" {
+  type        = number
+  description = "Maximum capacity for the Application Gateway"
+
+  default = 10
+}

@@ -23,10 +23,16 @@ resource "azurerm_application_gateway" "application_gateway" {
   location            = var.location
 
   sku {
-    name     = "Standard_v2"
-    tier     = "Standard_v2"
-    capacity = 2
+    name     = var.application_gateway_sku_name
+    tier     = var.application_gateway_sku_tier
+    capacity = var.application_gateway_min_capacity
   }
+
+  # Enable for production subscription
+  #   autoscale_configuration {
+  #     min_capacity = var.application_gateway_min_capacity
+  #     max_capacity = var.application_gateway_max_capacity
+  #   }
 
   tags         = var.tags
   enable_http2 = true
@@ -67,7 +73,7 @@ resource "azurerm_application_gateway" "application_gateway" {
     frontend_ip_configuration_name = local.frontend_ip_configuration_name
     frontend_port_name             = local.frontend_port_name
     protocol                       = "Https"
-    ssl_certificate_name = "cert-appgateway-${var.project_name}"
+    ssl_certificate_name           = "cert-appgateway-${var.project_name}"
   }
 
   request_routing_rule {
