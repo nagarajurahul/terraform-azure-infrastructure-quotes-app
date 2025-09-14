@@ -24,14 +24,17 @@ resource "azurerm_linux_web_app" "webapp" {
 
   public_network_access_enabled = false
 
-  # https_only            = true
+  https_only = true
   # virtual_network_backup_restore_enabled = true
 
   site_config {
     minimum_tls_version = "1.2"
+    health_check_path   = "/health"
+    health_check_eviction_time_in_min = 2
     application_stack {
       node_version = var.node_version
     }
+    app_command_line = "npm start"
   }
 
   identity {
