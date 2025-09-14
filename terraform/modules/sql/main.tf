@@ -35,44 +35,44 @@ resource "azurerm_mssql_server" "sql_server" {
 # Mainly designed for provisioned database for high speed PII workloads
 
 resource "azurerm_mssql_database" "sql_database" {
-  name         = "sqldb-${var.project_name}-${var.environment}"
-  server_id    = azurerm_mssql_server.sql_server.id
-  collation    = "Latin1_General_100_CI_AS_SC_UTF8"
-  create_mode  = "Default"
-  max_size_gb  = var.sql_database_max_size_gb
-  sku_name     = var.sql_database_sku
+  name        = "sqldb-${var.project_name}-${var.environment}"
+  server_id   = azurerm_mssql_server.sql_server.id
+  collation   = "Latin1_General_100_CI_AS_SC_UTF8"
+  create_mode = "Default"
+  max_size_gb = var.sql_database_max_size_gb
+  sku_name    = var.sql_database_sku
+  tags        = var.tags
+
 
   # For Encryption
   transparent_data_encryption_enabled = true
   enclave_type                        = "VBS"
 
-  # zone_redundant       = false
-  # geo_backup_enabled   = false
-  # storage_account_type = "Local"
+  zone_redundant       = false
+  geo_backup_enabled   = false
+  storage_account_type = "Local"
   # sample_name          = "AdventureWorksLT"
 
-  zone_redundant       = true
-  geo_backup_enabled   = true
-  storage_account_type = "GeoZone"
-  secondary_type       = "Geo"
-
-  tags = var.tags
+  # zone_redundant       = true
+  # geo_backup_enabled   = true
+  # storage_account_type = "GeoZone"
+  # secondary_type       = "Geo"
 
   #   prevent the possibility of accidental data loss
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 
-  short_term_retention_policy {
-    retention_days           = 35
-    backup_interval_in_hours = 12
-  }
+  # short_term_retention_policy {
+  #   retention_days           = 35
+  #   backup_interval_in_hours = 12
+  # }
 
-  long_term_retention_policy {
-    weekly_retention  = "P12W"
-    monthly_retention = "P12M"
-    yearly_retention  = "P5Y"
-    week_of_year      = 1
-  }
+  # long_term_retention_policy {
+  #   weekly_retention  = "P12W"
+  #   monthly_retention = "P12M"
+  #   yearly_retention  = "P5Y"
+  #   week_of_year      = 1
+  # }
 
 }
