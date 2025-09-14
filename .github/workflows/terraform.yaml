@@ -5,6 +5,7 @@ on:
     branches:
     - main
     - network
+    - app-service
     paths:
     - terraform/**
   pull_request:
