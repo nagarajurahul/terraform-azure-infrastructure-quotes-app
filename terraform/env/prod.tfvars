@@ -1,6 +1,8 @@
-location            = "East US"
+location            = "Central US"
 tags                = { Environment = "Production", Project = "QuotesApp", Owner = "Rahul" }
 project_name        = "quotes-app"
+environment = "prod"
+
 vnet_name           = "quotes-app-vnet-prod"
 vnet_cidr           = "10.0.0.0/16"
 
@@ -15,3 +17,11 @@ subnet_cidrs = {
 sku                     = "Standard"
 public_ip_prefix_length = 31
 public_ip_prefix_zones  = ["1", "2", "3"]
+
+
+sql_server_version       = "12.0"
+sql_database_max_size_gb = "24"
+sql_database_sku         = "GP_S_Gen5_2"
+
+sql_admin_login_secret_name    = "SQL-QUOTES-APP-PROD-ADMIN-LOGIN"
+sql_admin_password_secret_name = "SQL-QUOTES-APP-PROD-ADMIN-PASSWORD"
