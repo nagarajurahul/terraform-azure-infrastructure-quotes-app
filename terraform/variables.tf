@@ -61,11 +61,6 @@ variable "public_ip_prefix_zones" {
   description = "Public IP Prefix Zones"
 }
 
-variable "environment" {
-  type        = string
-  description = "Deployment environment (e.g., dev, qa, prod)"
-}
-
 variable "sql_server_version" {
   description = "Version of the Azure SQL Server (e.g., 12.0)"
   type        = string
