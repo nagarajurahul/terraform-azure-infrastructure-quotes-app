@@ -67,3 +67,20 @@ module "app_service" {
 
 }
 
+
+module "application_gateway" {
+  source = "./modules/application-gateway"
+
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  tags                = var.tags
+  project_name        = var.project_name
+  environment         = var.environment
+
+  vnet_name                     = var.vnet_name
+  application_gateway_subnet_id = module.network.subnet_ids["web"]
+  backend_private_dns_address   = "some.example.com"
+
+  # backend_private_dns_address = module.app_service.backend_private_dns_address
+
+}
