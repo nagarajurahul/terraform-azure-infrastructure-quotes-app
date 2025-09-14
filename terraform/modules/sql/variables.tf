@@ -64,3 +64,13 @@ variable "sql_admin_password_secret_name" {
   description = "Key Vault secret name for SQL administrator password"
   type        = string
 }
+
+variable "vnet_id" {
+  description = "Virtual Network ID"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "Subnet ID where Private Endpoint resides"
+  type        = string
+}

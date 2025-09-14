@@ -49,4 +49,6 @@ module "sql" {
   sql_admin_login_secret_name    = var.sql_admin_login_secret_name
   sql_admin_password_secret_name = var.sql_admin_password_secret_name
 
+  vnet_id = module.network.vnet_id
+  subnet_id = module.network.subnet_ids["db"]
 }
