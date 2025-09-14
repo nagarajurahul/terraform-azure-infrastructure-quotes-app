@@ -35,7 +35,6 @@ resource "azurerm_mssql_database" "sql_database" {
   name         = "sqldb-${var.project_name}-${var.environment}"
   server_id    = azurerm_mssql_server.sql_server.id
   collation    = "Latin1_General_100_CI_AS_SC_UTF8"
-  license_type = "LicenseIncluded"
   create_mode  = "Default"
   max_size_gb  = var.sql_database_max_size_gb
   sku_name     = var.sql_database_sku
