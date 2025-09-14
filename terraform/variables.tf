@@ -79,11 +79,6 @@ variable "sql_database_sku" {
   default     = "GP_S_Gen5_2"
 }
 
-variable "audit_storage_account_name" {
-  description = "Name of the storage account for audit logs"
-  type        = string
-}
-
 variable "key_vault_name" {
   description = "Name of the Key Vault where SQL admin credentials are stored"
   type        = string
