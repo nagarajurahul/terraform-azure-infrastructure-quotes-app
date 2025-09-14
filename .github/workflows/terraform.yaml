@@ -6,6 +6,7 @@ on:
     - main
     - network
     - app-service
+    - sql
     paths:
     - terraform/**
   pull_request:
@@ -78,6 +79,11 @@ jobs:
           --vault-name $KEY_VAULT_NAME \
           --name resource-group-name \
           --query value -o tsv)\"" >> terraform.tfvars
+
+    - name: Write secrets into terraform.tfvars
+      run: |
+        echo "key_vault_name = \"${{ secrets.KEY_VAULT_NAME }}\"" >> terraform.tfvars
+        echo "key_vault_resource_group_name = \"${{ secrets.KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
 
     - name: Terraform Init
       id: init
@@ -187,6 +193,11 @@ jobs:
           --vault-name $KEY_VAULT_NAME \
           --name resource-group-name \
           --query value -o tsv)\"" >> terraform.tfvars
+
+    - name: Write secrets into terraform.tfvars
+      run: |
+        echo "key_vault_name = \"${{ secrets.KEY_VAULT_NAME }}\"" >> terraform.tfvars
+        echo "key_vault_resource_group_name = \"${{ secrets.KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
 
     - name: Terraform Init
       id: init
