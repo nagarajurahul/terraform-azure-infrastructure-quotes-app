@@ -20,8 +20,8 @@ public_ip_prefix_zones  = ["1", "2", "3"]
 
 
 sql_server_version       = "12.0"
-sql_database_max_size_gb = "24"
-sql_database_sku         = "GP_S_Gen5_2"
+sql_database_max_size_gb = "32"
+sql_database_sku         = "GP_Gen5_4"
 
 sql_admin_login_secret_name    = "SQL-QUOTES-APP-PROD-ADMIN-LOGIN"
 sql_admin_password_secret_name = "SQL-QUOTES-APP-PROD-ADMIN-PASSWORD"

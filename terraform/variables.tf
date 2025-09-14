@@ -74,9 +74,9 @@ variable "sql_database_max_size_gb" {
 }
 
 variable "sql_database_sku" {
-  description = "SKU name for the SQL Database (e.g., GP_S_Gen5_2)"
+  description = "SKU name for the SQL Database (e.g., GP_Gen5_4)"
   type        = string
-  default     = "GP_S_Gen5_2"
+  default     = "GP_Gen5_4"
 }
 
 variable "key_vault_name" {
