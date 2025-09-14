@@ -3,6 +3,7 @@ tags                = { Environment = "Production", Project = "QuotesApp", Owner
 project_name        = "quotes-app"
 vnet_name           = "quotes-app-vnet-prod"
 vnet_cidr           = "10.0.0.0/16"
+environment         = "prod"
 
 subnet_cidrs = {
     web     = "10.0.1.0/24"   # 256 IPs
@@ -15,3 +16,6 @@ subnet_cidrs = {
 sku                     = "Standard"
 public_ip_prefix_length = 31
 public_ip_prefix_zones  = ["1", "2", "3"]
+
+web_app_sku_name = "F1"
+node_version     = "22-lts"

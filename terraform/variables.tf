@@ -55,3 +55,18 @@ variable "public_ip_prefix_zones" {
   type        = list(string)
   description = "Public IP Prefix Zones"
 }
+
+variable "environment" {
+  type        = string
+  description = "Deployment environment (e.g., dev, qa, prod)"
+}
+
+variable "web_app_sku_name" {
+  type        = string
+  description = "Web App SKU name"
+}
+
+variable "node_version" {
+  type        = string
+  description = "Node version for the Web App"
+}
