@@ -1,37 +1,16 @@
 variable "resource_group_name" {
-  description = "The name of the resource group"
   type        = string
+  description = "The name of the resource group"
 }
 
 variable "location" {
-  description = "The Azure location where the resource group will be created"
   type        = string
+  description = "The Azure location where resources will be deployed"
 }
 
 variable "tags" {
+  type        = map(string)
   description = "A map of tags to assign"
-  type        = map(string)
-  default     = {}
-}
-
-variable "vnet_name" {
-  type        = string
-  description = "Name for the VNet"
-}
-
-variable "vnet_cidr" {
-  type        = string
-  description = "CIDR for the VNet"
-}
-
-variable "dns_servers" {
-  type    = list(string)
-  default = []
-}
-
-variable "subnet_cidrs" {
-  type        = map(string)
-  description = "CIDRs for web, app, db subnets"
 }
 
 variable "project_name" {
@@ -42,23 +21,6 @@ variable "project_name" {
 variable "environment" {
   type        = string
   description = "Deployment environment (e.g., dev, qa, prod)"
-}
-
-variable "sku" {
-  type        = string
-  description = "SKU name"
-
-  default = "Standard"
-}
-
-variable "public_ip_prefix_length" {
-  type        = number
-  description = "Public IP Prefix Length"
-}
-
-variable "public_ip_prefix_zones" {
-  type        = list(string)
-  description = "Public IP Prefix Zones"
 }
 
 variable "sql_server_version" {
@@ -77,11 +39,6 @@ variable "sql_database_sku" {
   description = "SKU name for the SQL Database (e.g., GP_S_Gen5_2)"
   type        = string
   default     = "GP_S_Gen5_2"
-}
-
-variable "audit_storage_account_name" {
-  description = "Name of the storage account for audit logs"
-  type        = string
 }
 
 variable "key_vault_name" {
