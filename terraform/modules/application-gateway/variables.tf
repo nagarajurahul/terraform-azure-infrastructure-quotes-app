@@ -35,7 +35,7 @@ variable "application_gateway_subnet_id" {
 
 variable "backend_private_dns_address" {
   type        = string
-  description = "Private DNS Address of the App Service"
+  description = "Private DNS Address of the Backend"
 }
 
 variable "application_gateway_sku_name" {
