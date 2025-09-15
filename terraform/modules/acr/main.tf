@@ -8,6 +8,7 @@ resource "azurerm_container_registry" "acr" {
   tags                = var.tags
   sku                 = var.acr_sku
   admin_enabled       = false
+  # zone_redundancy_enabled = true
 }
 
 resource "azurerm_private_endpoint" "acr_pe" {
