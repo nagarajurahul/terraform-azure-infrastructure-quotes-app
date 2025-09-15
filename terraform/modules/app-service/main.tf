@@ -28,16 +28,38 @@ resource "azurerm_linux_web_app" "webapp" {
   # virtual_network_backup_restore_enabled = true
 
   site_config {
+    application_stack {
+      docker_image_name   = "{var.docker_image_name}}:{var.docker_image_tag}"
+      docker_registry_url = "https://${var.acr_login_server}"
+    }
+
+    # Ensure App Service uses managed identity to pull from ACR
+    container_registry_use_managed_identity = true
+
+    # Ensure App Service pulls over VNet since we using private endpoints
+    vnet_route_all_enabled = true
+
+    always_on                         = true
+    http2_enabled                     = true
     minimum_tls_version               = "1.2"
     health_check_path                 = "/health"
     health_check_eviction_time_in_min = 2
-    application_stack {
-      node_version = var.node_version
-    }
-    app_command_line = "npm start"
   }
+
+  app_settings = {
+    WEBSITES_PORT = "8080"
+    NODE_ENV      = "production"
+  }
+
+  vnet_image_pull_enabled = true
 
   identity {
     type = "SystemAssigned"
   }
+}
+
+resource "azurerm_role_assignment" "acr_pull" {
+  scope                = var.acr_id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_linux_web_app.webapp.identity[0].principal_id
 }

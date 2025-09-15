@@ -1,9 +1,9 @@
 location            = "Central US"
 tags                = { Environment = "Production", Project = "QuotesApp", Owner = "Rahul" }
-project_name        = "quotes-app"
+project_name        = "quotesapp"
 environment = "prod"
 
-vnet_name           = "quotes-app-vnet-prod"
+vnet_name           = "vnet-quotesapp-prod"
 vnet_cidr           = "10.0.0.0/16"
 
 subnet_cidrs = {
@@ -33,5 +33,8 @@ application_gateway_sku_tier     = "Basic"
 application_gateway_min_capacity = 1
 application_gateway_max_capacity = 2
 
-custom_domain_name                        = "quotesapp.com"
+custom_domain_name                        = "app.quotesapp.com"
 org_name                                  = "Our Org"
+
+docker_image_name = "quotesapp"
+docker_image_tag  = "latest"

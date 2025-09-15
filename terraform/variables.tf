@@ -172,3 +172,13 @@ variable "key_vault_ssl_certificate_secret_name" {
   description = "Secret name in Key Vault where certificate resides"
   default     = ""
 }
+
+variable "docker_image_name" {
+  type        = string
+  description = "Docker Image Name"
+}
+
+variable "docker_image_tag" {
+  type        = string
+  description = "Docker Image Tag"
+}

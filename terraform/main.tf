@@ -44,6 +44,17 @@ module "network" {
 
 }
 
+module "acr" {
+  source              = "./modules/acr"
+  project_name        = var.project_name
+  environment         = var.environment
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  vnet_id             = module.network.vnet_id
+  pe_subnet_id        = module.network.subnet_ids["db"]
+  tags                = var.tags
+}
+
 module "sql" {
   source = "./modules/sql"
 
@@ -69,6 +80,8 @@ module "sql" {
 module "app_service" {
   source = "./modules/app-service"
 
+  depends_on = [module.acr]
+
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = var.tags
@@ -78,10 +91,14 @@ module "app_service" {
   vnet_id   = module.network.vnet_id
   subnet_id = module.network.subnet_ids["app"]
 
-  web_app_sku_name = var.web_app_sku_name
-  node_version     = var.node_version
+  web_app_sku_name           = var.web_app_sku_name
+  node_version               = var.node_version
   private_endpoint_subnet_id = module.network.subnet_ids["db"]
 
+  acr_login_server  = module.acr.acr_login_server
+  acr_id            = module.acr.acr_id
+  docker_image_name = var.docker_image_name
+  docker_image_tag  = var.docker_image_tag
 }
 
 module "certificate" {
