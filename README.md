@@ -44,6 +44,8 @@ Cloud engineering team.
 
 ## 4. Architecture
 
+![Architecture Diagram](./Architecture.png)
+
 ### 4.1 High-Level Architecture Diagram
 
 ### 4.2 Components
@@ -72,7 +74,6 @@ Virtual Network with 4 subnets:
 - Managed Identity for App Service to access SQL DB.  
 - TLS 1.2 enforced end-to-end.  
 
-### 5.3 Terraform Project Structure
 
 ---
 
