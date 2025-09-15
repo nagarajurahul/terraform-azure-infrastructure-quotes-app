@@ -74,9 +74,13 @@ module "app_service" {
   tags                = var.tags
   project_name        = var.project_name
   environment         = var.environment
-  subnet_id           = module.network.subnet_ids["app"]
-  web_app_sku_name    = var.web_app_sku_name
-  node_version        = var.node_version
+
+  vnet_id   = module.network.vnet_id
+  subnet_id = module.network.subnet_ids["app"]
+
+  web_app_sku_name = var.web_app_sku_name
+  node_version     = var.node_version
+  private_endpoint_subnet_id = module.network.subnet_ids["db"]
 
 }
 
@@ -104,9 +108,7 @@ module "application_gateway" {
 
   vnet_name                     = var.vnet_name
   application_gateway_subnet_id = module.network.subnet_ids["web"]
-  backend_private_dns_address   = "some.example.com"
-
-  # backend_private_dns_address = module.app_service.backend_private_dns_address
+  backend_private_dns_address   = module.app_service.webapp_private_fqdn
 
   application_gateway_sku_name     = var.application_gateway_sku_name
   application_gateway_sku_tier     = var.application_gateway_sku_tier
