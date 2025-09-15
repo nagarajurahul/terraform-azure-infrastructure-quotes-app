@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - main
-    - acr
     paths:
     - terraform/**
   pull_request:

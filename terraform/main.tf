@@ -44,6 +44,17 @@ module "network" {
 
 }
 
+module "acr" {
+  source              = "./modules/acr"
+  project_name        = var.project_name
+  environment         = var.environment
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  vnet_id             = module.network.vnet_id
+  pe_subnet_id        = module.network.subnet_ids["db"]
+  tags                = var.tags
+}
+
 module "sql" {
   source = "./modules/sql"
 
@@ -78,8 +89,8 @@ module "app_service" {
   vnet_id   = module.network.vnet_id
   subnet_id = module.network.subnet_ids["app"]
 
-  web_app_sku_name = var.web_app_sku_name
-  node_version     = var.node_version
+  web_app_sku_name           = var.web_app_sku_name
+  node_version               = var.node_version
   private_endpoint_subnet_id = module.network.subnet_ids["db"]
 
 }

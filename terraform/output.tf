@@ -32,3 +32,7 @@ output "webapp_identity_tenant_id" {
   description = "The Tenant ID of the System Assigned Identity for the Web App."
   value       = module.app_service.webapp_identity_tenant_id
 }
+
+output "acr_login_server" {
+  value = module.acr.acr_login_server
+}
