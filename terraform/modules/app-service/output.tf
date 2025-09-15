@@ -32,3 +32,8 @@ output "webapp_identity_tenant_id" {
   description = "The Tenant ID of the System Assigned Identity for the Web App."
   value       = azurerm_linux_web_app.webapp.identity[0].tenant_id
 }
+
+output "webapp_private_fqdn" {
+  description = "The private DNS name of the App Service"
+  value       = "${azurerm_linux_web_app.webapp.name}.privatelink.azurewebsites.net"
+}

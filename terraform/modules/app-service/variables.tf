@@ -24,6 +24,11 @@ variable "environment" {
   description = "Deployment environment (e.g., dev, qa, prod)"
 }
 
+variable "vnet_id" {
+  description = "Virtual Network ID"
+  type        = string
+}
+
 variable "subnet_id" {
   type        = string
   description = "Subnet ID for the App Service"
@@ -38,4 +43,9 @@ variable "web_app_sku_name" {
 variable "node_version" {
   type        = string
   description = "Node version for the Web App"
+}
+
+variable "private_endpoint_subnet_id" {
+  type        = string
+  description = "Private Endpoint Subnet ID"
 }

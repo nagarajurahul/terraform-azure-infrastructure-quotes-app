@@ -4,9 +4,7 @@ on:
   push:
     branches:
     - main
-    - network
-    - app-service
-    - sql
+    - application-gateway
     paths:
     - terraform/**
   pull_request:
@@ -84,6 +82,9 @@ jobs:
       run: |
         echo "key_vault_name = \"${{ secrets.KEY_VAULT_NAME }}\"" >> terraform.tfvars
         echo "key_vault_resource_group_name = \"${{ secrets.KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
+        echo "certificate_key_vault_name = \"${{ secrets.CERTIFICATE_KEY_VAULT_NAME }}\"" >> terraform.tfvars
+        echo "certificate_key_vault_resource_group_name = \"${{ secrets.CERTIFICATE_KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
+        echo "identity_resource_group_name = \"${{ secrets.IDENTITY_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
 
     - name: Terraform Init
       id: init
@@ -198,6 +199,9 @@ jobs:
       run: |
         echo "key_vault_name = \"${{ secrets.KEY_VAULT_NAME }}\"" >> terraform.tfvars
         echo "key_vault_resource_group_name = \"${{ secrets.KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
+        echo "certificate_key_vault_name = \"${{ secrets.CERTIFICATE_KEY_VAULT_NAME }}\"" >> terraform.tfvars
+        echo "certificate_key_vault_resource_group_name = \"${{ secrets.CERTIFICATE_KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
+        echo "identity_resource_group_name = \"${{ secrets.IDENTITY_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
 
     - name: Terraform Init
       id: init
