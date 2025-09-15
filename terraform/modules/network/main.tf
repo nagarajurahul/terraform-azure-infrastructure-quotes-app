@@ -1,8 +1,14 @@
 resource "azurerm_virtual_network" "vnet" {
-  name                = var.vnet_name
+  name                = "vnet-${var.project_name}-${var.environment}"
   location            = var.location
   resource_group_name = var.resource_group_name
+  tags                = var.tags 
   address_space       = [var.vnet_cidr]
   dns_servers         = var.dns_servers
-  tags                = var.tags
+  
+  timeouts {
+    create = "10m"
+    update = "10m"
+    delete = "10m"
+  }
 }

@@ -49,6 +49,12 @@ resource "azurerm_linux_web_app" "webapp" {
   app_settings = {
     WEBSITES_PORT = "8080"
     NODE_ENV      = "production"
+    DB_HOST       = var.db_host
+    DB_NAME       = var.db_name
+    DB_PORT = var.db_port
+    # Only for dev/testing
+    DB_USER = data.azurerm_key_vault_secret.db_user_login.value
+    DB_PASS = data.azurerm_key_vault_secret.db_user_password.value
   }
 
   vnet_image_pull_enabled = true

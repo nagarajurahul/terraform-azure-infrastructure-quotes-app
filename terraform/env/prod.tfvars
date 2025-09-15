@@ -12,6 +12,7 @@ subnet_cidrs = {
     db      = "10.0.3.0/24"   # 256 IPs
     pe      = "10.0.4.0/27"   # 32 IPs
     bastion = "10.0.10.0/27"  # 32 IPs
+    mgmt    = "10.0.11.0/27"  # 32 IPs
 }
 
 sku                     = "Standard"
@@ -38,3 +39,6 @@ org_name                                  = "Our Org"
 
 docker_image_name = "quotesapp"
 docker_image_tag  = "latest"
+
+db_user_login_secret_name =  "SQL-QUOTES-APP-PROD-DB-USER-LOGIN"
+db_user_password_secret_name =  "SQL-QUOTES-APP-PROD-DB-USER-PASSWORD"

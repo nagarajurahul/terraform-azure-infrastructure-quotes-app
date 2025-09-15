@@ -13,6 +13,14 @@ data "azurerm_key_vault_secret" "sql_admin_password" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
+# data "azurerm_client_config" "current" {}
+
+# resource "azurerm_user_assigned_identity" "sql_mi" {
+#   name                = "sql-mi-${var.project_name}-${var.environment}"
+#   location            = var.location
+#   resource_group_name = var.resource_group_name
+# }
+
 resource "azurerm_mssql_server" "sql_server" {
   name                = "sqlserver-${var.project_name}-${var.environment}"
   resource_group_name = var.resource_group_name
@@ -26,6 +34,20 @@ resource "azurerm_mssql_server" "sql_server" {
 
   public_network_access_enabled        = false
   outbound_network_restriction_enabled = true
+
+  # identity {
+  #   type         = "UserAssigned"
+  #   identity_ids = [azurerm_user_assigned_identity.sql_mi.id]
+  # }
+
+  # primary_user_assigned_identity_id = azurerm_user_assigned_identity.sql_mi.id
+
+  # azuread_administrator {
+  #   login_username              = var.sql_login_username
+  #   object_id                   = var.sql_admin_group_object_id
+  #   tenant_id                   = data.azurerm_client_config.current.tenant_id
+  #   azuread_authentication_only = true
+  # }
 
   #   express_vulnerability_assessment_enabled = false
   #   connection_policy                        = "Default"
@@ -49,7 +71,7 @@ resource "azurerm_mssql_database" "sql_database" {
   enclave_type                        = "VBS"
 
   zone_redundant       = false
-  geo_backup_enabled   = false
+  geo_backup_enabled   = true
   storage_account_type = "Local"
   # sample_name          = "AdventureWorksLT"
 

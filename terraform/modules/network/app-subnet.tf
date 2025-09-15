@@ -28,6 +28,8 @@ resource "azurerm_public_ip_prefix" "nat" {
   sku                 = var.sku
   zones               = var.public_ip_prefix_zones
   prefix_length       = var.public_ip_prefix_length
+
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 resource "azurerm_nat_gateway" "nat" {
@@ -36,6 +38,8 @@ resource "azurerm_nat_gateway" "nat" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
   sku_name            = var.sku
+
+  depends_on = [azurerm_virtual_network.vnet]
 }
 
 resource "azurerm_nat_gateway_public_ip_prefix_association" "nat" {
@@ -44,6 +48,7 @@ resource "azurerm_nat_gateway_public_ip_prefix_association" "nat" {
 }
 
 resource "azurerm_subnet_nat_gateway_association" "app_nat" {
+  depends_on = [ azurerm_subnet.app, azurerm_nat_gateway.nat ]
   subnet_id      = azurerm_subnet.app.id
   nat_gateway_id = azurerm_nat_gateway.nat.id
 }

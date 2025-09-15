@@ -74,3 +74,21 @@ variable "subnet_id" {
   description = "Subnet ID where Private Endpoint resides"
   type        = string
 }
+
+# variable "web_app_name" {
+#   description = "Web App name"
+#   type        = string
+#   default     = "webapp-quotesapp-production"
+# }
+
+# variable "sql_login_username" {
+#   type      = string
+#   default   = "Login Username for SQL"
+#   sensitive = true
+# }
+
+# variable "sql_admin_group_object_id" {
+#   description = "Object ID of the pre-created SQL Admins AAD group"
+#   type        = string
+#   sensitive   = true
+# }

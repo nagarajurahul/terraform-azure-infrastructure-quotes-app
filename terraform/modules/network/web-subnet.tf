@@ -10,6 +10,8 @@ resource "azurerm_network_security_group" "web_nsg" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
+  depends_on = [azurerm_virtual_network.vnet]
+
   security_rule {
     name                       = "Allow-HTTPS-In"
     priority                   = 100
