@@ -182,3 +182,25 @@ variable "docker_image_tag" {
   type        = string
   description = "Docker Image Tag"
 }
+
+variable "db_user_login_secret_name" {
+  description = "Key Vault secret name for DB login"
+  type        = string
+}
+
+variable "db_user_password_secret_name" {
+  description = "Key Vault secret name for DB password"
+  type        = string
+}
+
+# variable "sql_login_username" {
+#   type      = string
+#   default   = "Login Username for SQL"
+#   sensitive = true
+# }
+
+# variable "sql_admin_group_object_id" {
+#   description = "Object ID of the pre-created SQL Admins AAD group"
+#   type        = string
+#   sensitive   = true
+# }

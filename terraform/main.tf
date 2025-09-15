@@ -23,16 +23,22 @@ resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
+  timeouts {
+    create = "10m"
+    update = "10m"
+    delete = "10m"
+  }
 }
 
 module "network" {
-  source = "./modules/network"
+  source     = "./modules/network"
+  depends_on = [azurerm_resource_group.rg]
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = var.tags
+  environment         = var.environment
 
-  vnet_name    = var.vnet_name
   vnet_cidr    = var.vnet_cidr
   dns_servers  = var.dns_servers
   subnet_cidrs = var.subnet_cidrs
@@ -44,19 +50,10 @@ module "network" {
 
 }
 
-module "acr" {
-  source              = "./modules/acr"
-  project_name        = var.project_name
-  environment         = var.environment
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  vnet_id             = module.network.vnet_id
-  pe_subnet_id        = module.network.subnet_ids["db"]
-  tags                = var.tags
-}
 
 module "sql" {
-  source = "./modules/sql"
+  source     = "./modules/sql"
+  depends_on = [module.network]
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -75,12 +72,29 @@ module "sql" {
 
   vnet_id   = module.network.vnet_id
   subnet_id = module.network.subnet_ids["db"]
+
+  # sql_login_username        = var.sql_login_username
+  # sql_admin_group_object_id = var.sql_admin_group_object_id
 }
 
-module "app_service" {
-  source = "./modules/app-service"
+module "acr" {
+  source     = "./modules/acr"
+  depends_on = [module.network]
 
-  depends_on = [module.acr]
+  project_name        = var.project_name
+  environment         = var.environment
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  vnet_id             = module.network.vnet_id
+  pe_subnet_id        = module.network.subnet_ids["db"]
+  tags                = var.tags
+}
+
+
+module "app_service" {
+  source     = "./modules/app-service"
+  depends_on = [module.network, module.acr]
+
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -99,6 +113,13 @@ module "app_service" {
   acr_id            = module.acr.acr_id
   docker_image_name = var.docker_image_name
   docker_image_tag  = var.docker_image_tag
+  db_name           = module.sql.sql_database_name
+  db_host           = module.sql.sql_server_fqdn
+
+  key_vault_name                = var.key_vault_name
+  key_vault_resource_group_name = var.key_vault_resource_group_name
+  db_user_login_secret_name     = var.db_user_login_secret_name
+  db_user_password_secret_name  = var.db_user_password_secret_name
 }
 
 module "certificate" {
@@ -115,7 +136,7 @@ module "certificate" {
 module "application_gateway" {
   source = "./modules/application-gateway"
 
-  depends_on = [module.network, module.certificate]
+  depends_on = [module.network, module.app_service, module.certificate]
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -123,7 +144,7 @@ module "application_gateway" {
   project_name        = var.project_name
   environment         = var.environment
 
-  vnet_name                     = var.vnet_name
+  vnet_name                     = module.network.vnet_name
   application_gateway_subnet_id = module.network.subnet_ids["web"]
   backend_private_dns_address   = module.app_service.webapp_private_fqdn
 

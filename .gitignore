@@ -40,3 +40,4 @@ terraform.rc
 steps.md
 backend-config.hcl
 .terraform.lock.hcl
+terraform/tfplan

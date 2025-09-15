@@ -14,11 +14,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "vnet_name" {
-  type        = string
-  description = "Name for the VNet"
-}
-
 variable "vnet_cidr" {
   type        = string
   description = "CIDR for the VNet"
@@ -37,6 +32,11 @@ variable "subnet_cidrs" {
 variable "project_name" {
   type        = string
   description = "Project name"
+}
+
+variable "environment" {
+  type        = string
+  description = "Deployment environment (e.g., dev, qa, prod)"
 }
 
 variable "sku" {

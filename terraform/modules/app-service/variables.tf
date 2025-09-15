@@ -69,3 +69,43 @@ variable "docker_image_tag" {
   type        = string
   description = "Docker Image Tag"
 }
+
+variable "db_host" {
+  type = string
+  description = "DB Host"
+}
+
+variable "db_name" {
+  type = string
+  description = "DB Name"
+}
+
+variable "db_port" {
+  type = string
+  description = "DB Port"
+  default = "1433"
+}
+
+variable "key_vault_name" {
+  description = "Name of the Key Vault where DB credentials are stored"
+  type        = string
+
+  sensitive = true
+}
+
+variable "key_vault_resource_group_name" {
+  description = "The name of the resource group where Key Vault is present"
+  type        = string
+
+  sensitive = true
+}
+
+variable "db_user_login_secret_name" {
+  description = "Key Vault secret name for DB login"
+  type        = string
+}
+
+variable "db_user_password_secret_name" {
+  description = "Key Vault secret name for DB password"
+  type        = string
+}
