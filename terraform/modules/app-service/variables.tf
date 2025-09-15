@@ -49,3 +49,23 @@ variable "private_endpoint_subnet_id" {
   type        = string
   description = "Private Endpoint Subnet ID"
 }
+
+variable "acr_login_server" {
+  type        = string
+  description = "ACR Login Server"
+}
+
+variable "acr_id" {
+  type        = string
+  description = "ACR ID"
+}
+
+variable "docker_image_name" {
+  type        = string
+  description = "Docker Image Name"
+}
+
+variable "docker_image_tag" {
+  type        = string
+  description = "Docker Image Tag"
+}

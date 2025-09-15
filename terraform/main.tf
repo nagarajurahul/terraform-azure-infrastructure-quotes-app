@@ -80,6 +80,8 @@ module "sql" {
 module "app_service" {
   source = "./modules/app-service"
 
+  depends_on = [module.acr]
+
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = var.tags
@@ -93,6 +95,10 @@ module "app_service" {
   node_version               = var.node_version
   private_endpoint_subnet_id = module.network.subnet_ids["db"]
 
+  acr_login_server  = module.acr.acr_login_server
+  acr_id            = module.acr.acr_id
+  docker_image_name = var.docker_image_name
+  docker_image_tag  = var.docker_image_tag
 }
 
 module "certificate" {

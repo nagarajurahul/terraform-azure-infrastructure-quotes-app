@@ -35,3 +35,6 @@ application_gateway_max_capacity = 2
 
 custom_domain_name                        = "quotesapp.com"
 org_name                                  = "Our Org"
+
+docker_image_name = "quotesapp"
+docker_image_tag  = "latest"
