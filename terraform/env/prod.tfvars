@@ -1,9 +1,9 @@
 location            = "Central US"
 tags                = { Environment = "Production", Project = "QuotesApp", Owner = "Rahul" }
-project_name        = "quotes-app"
+project_name        = "quotesapp"
 environment = "prod"
 
-vnet_name           = "quotes-app-vnet-prod"
+vnet_name           = "quotesapp-vnet-prod"
 vnet_cidr           = "10.0.0.0/16"
 
 subnet_cidrs = {
