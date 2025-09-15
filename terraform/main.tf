@@ -121,4 +121,5 @@ module "application_gateway" {
 
   key_vault_ssl_certificate_secret_id = module.certificate.key_vault_ssl_certificate_secret_id
   custom_domain_name                  = var.custom_domain_name
+  host_name                           = module.app_service.webapp_default_hostname
 }

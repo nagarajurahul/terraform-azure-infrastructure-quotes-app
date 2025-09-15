@@ -1,4 +1,3 @@
-
 resource "azurerm_public_ip" "pip" {
   name                = "pip-appgateway-${var.project_name}"
   resource_group_name = var.resource_group_name
@@ -18,7 +17,7 @@ locals {
 }
 
 resource "azurerm_application_gateway" "application_gateway" {
-  depends_on = [ azurerm_role_assignment.appgw_kv_secret_access ]
+  depends_on = [azurerm_role_assignment.appgw_kv_secret_access]
 
   name                = "appgateway-${var.project_name}"
   resource_group_name = var.resource_group_name
@@ -73,11 +72,12 @@ resource "azurerm_application_gateway" "application_gateway" {
   backend_http_settings {
     name                                = local.http_setting_name
     cookie_based_affinity               = "Disabled"
-    path                                = "/path1/"
     port                                = 443
     protocol                            = "Https"
     request_timeout                     = 60
-    pick_host_name_from_backend_address = true
+    pick_host_name_from_backend_address = false
+    host_name = var.host_name
+    probe_name                          = "${var.vnet_name}-probe"
   }
 
   http_listener {
@@ -86,7 +86,20 @@ resource "azurerm_application_gateway" "application_gateway" {
     frontend_port_name             = local.frontend_port_name
     protocol                       = "Https"
     ssl_certificate_name           = "appgateway-cert-${var.project_name}"
-    host_name                      = var.custom_domain_name
+  }
+
+  probe {
+    name                = "${var.vnet_name}-probe"
+    protocol            = "Https"
+    host                = var.host_name
+    path                = "/health"
+    interval            = 30
+    timeout             = 30
+    unhealthy_threshold = 3
+
+    match {
+      status_code = ["200-399"]
+    }
   }
 
   request_routing_rule {

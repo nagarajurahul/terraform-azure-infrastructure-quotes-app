@@ -90,3 +90,8 @@ variable "custom_domain_name" {
   type        = string
   description = "Domain name"
 }
+
+variable "host_name" {
+  type = string
+  description = "Host name of the backend"
+}
