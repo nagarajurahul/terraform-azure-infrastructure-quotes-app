@@ -1,9 +1,6 @@
-# terraform-azure-infrastructure-quotes-app
-terraform-azure-infrastructure-quotes-app
-
 # Assessment Documentation
 
-## 1. Executive Summary
+## 1. Summary
 
 **Project Name:** Quotes App – Secure, Highly Available Public Web Application on Azure  
 
