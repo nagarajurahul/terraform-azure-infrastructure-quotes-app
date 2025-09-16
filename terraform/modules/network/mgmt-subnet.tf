@@ -1,7 +1,7 @@
 resource "azurerm_subnet" "mgmt" {
   name                 = "mgmt-subnet"
   resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = var.vnet_name
   address_prefixes     = [var.subnet_cidrs["mgmt"]]
 }
 
@@ -10,7 +10,7 @@ resource "azurerm_network_interface" "mgmt_vm_nic" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  depends_on = [azurerm_virtual_network.vnet]
+  depends_on = [ azurerm_subnet.mgmt ]
 
   ip_configuration {
     name                          = "internal"

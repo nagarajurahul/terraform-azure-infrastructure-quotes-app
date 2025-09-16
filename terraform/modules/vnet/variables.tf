@@ -14,14 +14,14 @@ variable "tags" {
   default     = {}
 }
 
-variable "vnet_name" {
+variable "vnet_cidr" {
   type        = string
-  description = "Name of the VNet"
+  description = "CIDR for the VNet"
 }
 
-variable "subnet_cidrs" {
-  type        = map(string)
-  description = "CIDRs for web, app, db subnets"
+variable "dns_servers" {
+  type    = list(string)
+  default = []
 }
 
 variable "project_name" {
@@ -32,19 +32,4 @@ variable "project_name" {
 variable "environment" {
   type        = string
   description = "Deployment environment (e.g., dev, qa, prod)"
-}
-
-variable "sku" {
-  type        = string
-  description = "SKU name"
-}
-
-variable "public_ip_prefix_length" {
-  type        = number
-  description = "Public IP Prefix Length"
-}
-
-variable "public_ip_prefix_zones" {
-  type        = list(string)
-  description = "Public IP Prefix Zones"
 }

@@ -18,45 +18,63 @@ provider "azurerm" {
 # https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
 # https://learn.microsoft.com/en-us/azure/architecture/web-apps/app-service/architectures/baseline-zone-redundant
 
-# Create the resource group
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
-  tags     = var.tags
-  timeouts {
-    create = "10m"
-    update = "10m"
-    delete = "10m"
-  }
+# # Create the resource group
+# resource "azurerm_resource_group" "rg" {
+#   name     = var.resource_group_name
+#   location = var.location
+#   tags     = var.tags
+
+#   timeouts {
+#     create = "10m"
+#     update = "10m"
+#     delete = "10m"
+#   }
+# }
+
+# resource "time_sleep" "wait_rg" {
+#   create_duration = "15s"
+
+#   depends_on = [ azurerm_resource_group.rg ]
+# }
+
+module "vnet" {
+  source = "./modules/vnet"
+
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+  project_name        = var.project_name
+  environment         = var.environment
+
+  vnet_cidr   = var.vnet_cidr
+  dns_servers = var.dns_servers
 }
 
 module "network" {
   source     = "./modules/network"
-  depends_on = [azurerm_resource_group.rg]
+  depends_on = [module.vnet]
 
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  resource_group_name = var.resource_group_name
+  location            = var.location
   tags                = var.tags
+  project_name        = var.project_name
   environment         = var.environment
 
-  vnet_cidr    = var.vnet_cidr
-  dns_servers  = var.dns_servers
+  vnet_name    = module.vnet.vnet_name
   subnet_cidrs = var.subnet_cidrs
 
-  project_name            = var.project_name
   sku                     = var.sku
   public_ip_prefix_length = var.public_ip_prefix_length
   public_ip_prefix_zones  = var.public_ip_prefix_zones
 
 }
 
-
 module "sql" {
   source     = "./modules/sql"
   depends_on = [module.network]
 
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  resource_group_name = var.resource_group_name
+  location            = var.location
   tags                = var.tags
   project_name        = var.project_name
   environment         = var.environment
@@ -70,7 +88,7 @@ module "sql" {
   sql_admin_login_secret_name    = var.sql_admin_login_secret_name
   sql_admin_password_secret_name = var.sql_admin_password_secret_name
 
-  vnet_id   = module.network.vnet_id
+  vnet_id   = module.vnet.vnet_id
   subnet_id = module.network.subnet_ids["db"]
 
   # sql_login_username        = var.sql_login_username
@@ -81,28 +99,29 @@ module "acr" {
   source     = "./modules/acr"
   depends_on = [module.network]
 
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
   project_name        = var.project_name
   environment         = var.environment
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  vnet_id             = module.network.vnet_id
-  pe_subnet_id        = module.network.subnet_ids["db"]
-  tags                = var.tags
+
+  vnet_id      = module.vnet.vnet_id
+  pe_subnet_id = module.network.subnet_ids["db"]
 }
 
 
 module "app_service" {
   source     = "./modules/app-service"
-  depends_on = [module.network, module.acr]
+  depends_on = [module.network, module.acr, module.sql]
 
 
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  resource_group_name = var.resource_group_name
+  location            = var.location
   tags                = var.tags
   project_name        = var.project_name
   environment         = var.environment
 
-  vnet_id   = module.network.vnet_id
+  vnet_id   = module.vnet.vnet_id
   subnet_id = module.network.subnet_ids["app"]
 
   web_app_sku_name           = var.web_app_sku_name
@@ -138,13 +157,13 @@ module "application_gateway" {
 
   depends_on = [module.network, module.app_service, module.certificate]
 
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  resource_group_name = var.resource_group_name
+  location            = var.location
   tags                = var.tags
   project_name        = var.project_name
   environment         = var.environment
 
-  vnet_name                     = module.network.vnet_name
+  vnet_name                     = module.vnet.vnet_name
   application_gateway_subnet_id = module.network.subnet_ids["web"]
   backend_private_dns_address   = module.app_service.webapp_private_fqdn
 
