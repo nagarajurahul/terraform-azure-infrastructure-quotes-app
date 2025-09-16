@@ -5,7 +5,7 @@ resource "azurerm_private_endpoint" "sql_pe" {
   name                = "sql-private-endpoint"
   location            = var.location
   resource_group_name = var.resource_group_name
-  subnet_id           = var.subnet_id
+  subnet_id           = var.private_endpoint_subnet_id
   tags                = var.tags
 
   private_service_connection {

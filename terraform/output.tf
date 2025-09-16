@@ -56,3 +56,33 @@ output "nat_gateway_id" {
   description = "The ID of the NAT Gateway associated with the App subnet."
   value       = module.subnets.nat_gateway_id
 }
+
+output "sql_server_name" {
+  description = "The name of the Azure SQL Server"
+  value       = module.sql.sql_server_name
+}
+
+output "sql_server_id" {
+  description = "The ID of the Azure SQL Server"
+  value       = module.sql.sql_server_id
+}
+
+output "sql_server_fqdn" {
+  description = "The fully qualified domain name (FQDN) of the Azure SQL Server"
+  value       = module.sql.sql_server_fqdn
+}
+
+output "sql_database_name" {
+  description = "The name of the Azure SQL Database"
+  value       = module.sql.sql_database_name
+}
+
+output "sql_database_id" {
+  description = "The ID of the Azure SQL Database"
+  value       = module.sql.sql_database_id
+}
+
+output "sql_database_collation" {
+  description = "The collation of the SQL Database"
+  value       = module.sql.sql_database_collation
+}

@@ -27,4 +27,3 @@ output "sql_database_collation" {
   description = "The collation of the SQL Database"
   value       = azurerm_mssql_database.sql_database.collation
 }
-

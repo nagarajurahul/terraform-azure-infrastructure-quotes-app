@@ -88,8 +88,8 @@ module "sql" {
   sql_admin_login_secret_name    = var.sql_admin_login_secret_name
   sql_admin_password_secret_name = var.sql_admin_password_secret_name
 
-  vnet_id   = module.vnet.vnet_id
-  subnet_id = module.subnets.subnet_ids["db"]
+  vnet_id                    = module.vnet.vnet_id
+  private_endpoint_subnet_id = module.subnets.subnet_ids["db"]
 
   # sql_login_username        = var.sql_login_username
   # sql_admin_group_object_id = var.sql_admin_group_object_id
