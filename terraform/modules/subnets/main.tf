@@ -21,6 +21,15 @@ resource "azurerm_subnet" "db" {
   private_link_service_network_policies_enabled = false
 }
 
+resource "azurerm_subnet" "pe" {
+  name                 = "pe-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = var.vnet_name
+  address_prefixes     = [var.subnet_cidrs["pe"]]
+
+  private_link_service_network_policies_enabled = false
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
 # https://learn.microsoft.com/en-us/azure/app-service/environment/networking
 # https://stackoverflow.com/questions/68735106/difference-between-azure-microsot-web-serverfams-vs-hostingenvironments

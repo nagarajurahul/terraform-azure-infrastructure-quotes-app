@@ -1,44 +1,27 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 4.44.0"
-    }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "~> 4.1.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
 # https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming
 # https://learn.microsoft.com/en-us/azure/architecture/web-apps/app-service/architectures/baseline-zone-redundant
 
-# # Create the resource group
-# resource "azurerm_resource_group" "rg" {
-#   name     = var.resource_group_name
-#   location = var.location
-#   tags     = var.tags
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = var.location
+  tags     = var.tags
 
-#   timeouts {
-#     create = "10m"
-#     update = "10m"
-#     delete = "10m"
-#   }
-# }
+  timeouts {
+    create = "10m"
+    update = "10m"
+    delete = "10m"
+  }
+}
 
-# resource "time_sleep" "wait_rg" {
-#   create_duration = "15s"
+resource "time_sleep" "wait_rg" {
+  create_duration = "15s"
 
-#   depends_on = [ azurerm_resource_group.rg ]
-# }
+  depends_on = [azurerm_resource_group.rg]
+}
 
 module "vnet" {
-  source = "./modules/vnet"
+  source     = "./modules/vnet"
+  depends_on = [time_sleep.wait_rg]
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -106,7 +89,7 @@ module "acr" {
   environment         = var.environment
 
   vnet_id      = module.vnet.vnet_id
-  pe_subnet_id = module.subnets.subnet_ids["db"]
+  pe_subnet_id = module.subnets.subnet_ids["pe"]
 }
 
 
@@ -126,7 +109,7 @@ module "app_service" {
 
   web_app_sku_name           = var.web_app_sku_name
   node_version               = var.node_version
-  private_endpoint_subnet_id = module.subnets.subnet_ids["db"]
+  private_endpoint_subnet_id = module.subnets.subnet_ids["pe"]
 
   acr_login_server  = module.acr.acr_login_server
   acr_id            = module.acr.acr_id
