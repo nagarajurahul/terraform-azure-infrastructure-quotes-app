@@ -46,3 +46,13 @@ output "vnet_name" {
   value       = module.vnet.vnet_name
   description = "The name of the Virtual Network"
 }
+
+output "subnet_ids" {
+  description = "Map of subnet IDs for the deployed subnets (web, app, db, and mgmt)."
+  value       = module.subnets.subnet_ids
+}
+
+output "nat_gateway_id" {
+  description = "The ID of the NAT Gateway associated with the App subnet."
+  value       = module.subnets.nat_gateway_id
+}

@@ -1,23 +1,3 @@
-# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
-# https://learn.microsoft.com/en-us/azure/app-service/environment/networking
-# https://stackoverflow.com/questions/68735106/difference-between-azure-microsot-web-serverfams-vs-hostingenvironments
-
-resource "azurerm_subnet" "app" {
-  name                 = "app-subnet"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = var.vnet_name
-  address_prefixes     = [var.subnet_cidrs["app"]]
-
-  delegation {
-    name = "appservice-delegation"
-    service_delegation {
-      name = "Microsoft.Web/serverFarms"
-      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
-    }
-  }
-}
-
-
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/nat_gateway
 # https://learn.microsoft.com/en-us/azure/nat-gateway/nat-overview#availability-zones
 

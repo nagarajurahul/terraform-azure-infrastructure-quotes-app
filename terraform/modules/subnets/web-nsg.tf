@@ -1,10 +1,3 @@
-resource "azurerm_subnet" "web" {
-  name                 = "web-subnet"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = var.vnet_name
-  address_prefixes     = [var.subnet_cidrs["web"]]
-}
-
 resource "azurerm_network_security_group" "web_nsg" {
   name                = "web-nsg"
   location            = var.location
@@ -58,7 +51,7 @@ resource "azurerm_network_security_group" "web_nsg" {
     source_address_prefix      = "AzureLoadBalancer"
     destination_address_prefix = "*"
   }
-  
+
   tags = var.tags
 }
 

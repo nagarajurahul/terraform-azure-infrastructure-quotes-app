@@ -50,8 +50,8 @@ module "vnet" {
   dns_servers = var.dns_servers
 }
 
-module "network" {
-  source     = "./modules/network"
+module "subnets" {
+  source     = "./modules/subnets"
   depends_on = [module.vnet]
 
   resource_group_name = var.resource_group_name
@@ -71,7 +71,7 @@ module "network" {
 
 module "sql" {
   source     = "./modules/sql"
-  depends_on = [module.network]
+  depends_on = [module.subnets]
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -89,7 +89,7 @@ module "sql" {
   sql_admin_password_secret_name = var.sql_admin_password_secret_name
 
   vnet_id   = module.vnet.vnet_id
-  subnet_id = module.network.subnet_ids["db"]
+  subnet_id = module.subnets.subnet_ids["db"]
 
   # sql_login_username        = var.sql_login_username
   # sql_admin_group_object_id = var.sql_admin_group_object_id
@@ -97,7 +97,7 @@ module "sql" {
 
 module "acr" {
   source     = "./modules/acr"
-  depends_on = [module.network]
+  depends_on = [module.subnets]
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -106,13 +106,13 @@ module "acr" {
   environment         = var.environment
 
   vnet_id      = module.vnet.vnet_id
-  pe_subnet_id = module.network.subnet_ids["db"]
+  pe_subnet_id = module.subnets.subnet_ids["db"]
 }
 
 
 module "app_service" {
   source     = "./modules/app-service"
-  depends_on = [module.network, module.acr, module.sql]
+  depends_on = [module.subnets, module.acr, module.sql]
 
 
   resource_group_name = var.resource_group_name
@@ -122,11 +122,11 @@ module "app_service" {
   environment         = var.environment
 
   vnet_id   = module.vnet.vnet_id
-  subnet_id = module.network.subnet_ids["app"]
+  subnet_id = module.subnets.subnet_ids["app"]
 
   web_app_sku_name           = var.web_app_sku_name
   node_version               = var.node_version
-  private_endpoint_subnet_id = module.network.subnet_ids["db"]
+  private_endpoint_subnet_id = module.subnets.subnet_ids["db"]
 
   acr_login_server  = module.acr.acr_login_server
   acr_id            = module.acr.acr_id
@@ -155,7 +155,7 @@ module "certificate" {
 module "application_gateway" {
   source = "./modules/application-gateway"
 
-  depends_on = [module.network, module.app_service, module.certificate]
+  depends_on = [module.subnets, module.app_service, module.certificate]
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -164,7 +164,7 @@ module "application_gateway" {
   environment         = var.environment
 
   vnet_name                     = module.vnet.vnet_name
-  application_gateway_subnet_id = module.network.subnet_ids["web"]
+  application_gateway_subnet_id = module.subnets.subnet_ids["web"]
   backend_private_dns_address   = module.app_service.webapp_private_fqdn
 
   application_gateway_sku_name     = var.application_gateway_sku_name
