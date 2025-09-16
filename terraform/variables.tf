@@ -14,11 +14,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "vnet_name" {
-  type        = string
-  description = "Name for the VNet"
-}
-
 variable "vnet_cidr" {
   type        = string
   description = "CIDR for the VNet"
