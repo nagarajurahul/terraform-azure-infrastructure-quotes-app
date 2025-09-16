@@ -5,7 +5,7 @@ resource "azurerm_service_plan" "service_plan" {
   tags                = var.tags
   os_type             = "Linux"
   sku_name            = var.web_app_sku_name
-
+  # Enable in production
   # premium_plan_auto_scale_enabled = true
   # per_site_scaling_enabled        = true
   # zone_balancing_enabled          = true
@@ -29,7 +29,7 @@ resource "azurerm_linux_web_app" "webapp" {
 
   site_config {
     application_stack {
-      docker_image_name   = "{var.docker_image_name}}:{var.docker_image_tag}"
+      docker_image_name   = "${var.docker_image_name}:${var.docker_image_tag}"
       docker_registry_url = "https://${var.acr_login_server}"
     }
 
@@ -51,7 +51,7 @@ resource "azurerm_linux_web_app" "webapp" {
     NODE_ENV      = "production"
     DB_HOST       = var.db_host
     DB_NAME       = var.db_name
-    DB_PORT = var.db_port
+    DB_PORT       = var.db_port
     # Only for dev/testing
     DB_USER = data.azurerm_key_vault_secret.db_user_login.value
     DB_PASS = data.azurerm_key_vault_secret.db_user_password.value
@@ -69,3 +69,5 @@ resource "azurerm_role_assignment" "acr_pull" {
   role_definition_name = "AcrPull"
   principal_id         = azurerm_linux_web_app.webapp.identity[0].principal_id
 }
+
+# Enable Monitoring and Logging in production

@@ -11,6 +11,5 @@ output "subnet_ids" {
 
 output "nat_gateway_id" {
   description = "The ID of the NAT Gateway associated with the App subnet."
-
   value = azurerm_nat_gateway.nat.id
 }
