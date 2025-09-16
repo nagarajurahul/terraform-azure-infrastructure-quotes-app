@@ -5,23 +5,13 @@ variable "resource_group_name" {
 
 variable "location" {
   type        = string
-  description = "The Azure location where the resource group will be created"
+  description = "The Azure location where resources will be created"
 }
 
 variable "tags" {
   type        = map(string)
-  description = "A map of tags to assign"
+  description = "Custom tags to assign to all resources."
   default     = {}
-}
-
-variable "vnet_name" {
-  type        = string
-  description = "Name of the VNet"
-}
-
-variable "subnet_cidrs" {
-  type        = map(string)
-  description = "CIDRs for web, app, db subnets"
 }
 
 variable "project_name" {
@@ -32,6 +22,16 @@ variable "project_name" {
 variable "environment" {
   type        = string
   description = "Deployment environment (e.g., dev, qa, prod)"
+}
+
+variable "vnet_name" {
+  type        = string
+  description = "Name of the Virtual Network"
+}
+
+variable "subnet_cidrs" {
+  type        = map(string)
+  description = "CIDRs for web, app, db subnets"
 }
 
 variable "sku" {
