@@ -20,6 +20,13 @@ resource "azurerm_mssql_server" "sql_server" {
   public_network_access_enabled        = false
   outbound_network_restriction_enabled = true
 
+  # Change this accordingly in production
+  lifecycle {
+    ignore_changes = [
+      connection_policy
+    ]
+  }
+
   # identity {
   #   type         = "UserAssigned"
   #   identity_ids = [azurerm_user_assigned_identity.sql_mi.id]
@@ -38,6 +45,11 @@ resource "azurerm_mssql_server" "sql_server" {
   #   connection_policy                        = "Default"
 }
 
+resource "time_sleep" "wait_for_sql" {
+  depends_on      = [azurerm_mssql_server.sql_server]
+  create_duration = "120s"
+}
+
 # https://learn.microsoft.com/en-us/azure/azure-sql/database/resource-limits-vcore-single-databases?view=azuresql
 # Mainly designed for provisioned database for high speed PII workloads
 
@@ -50,6 +62,7 @@ resource "azurerm_mssql_database" "sql_database" {
   sku_name    = var.sql_database_sku
   tags        = var.tags
 
+  depends_on = [time_sleep.wait_for_sql]
 
   # For Encryption
   transparent_data_encryption_enabled = true
