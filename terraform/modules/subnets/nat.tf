@@ -26,7 +26,7 @@ resource "azurerm_nat_gateway" "nat" {
 }
 
 resource "time_sleep" "wait_nat" {
-  create_duration = "15s"
+  create_duration = "30s"
 
   depends_on = [azurerm_nat_gateway.nat]
 }
