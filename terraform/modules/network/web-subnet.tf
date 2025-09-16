@@ -38,7 +38,7 @@ resource "azurerm_network_security_group" "web_nsg" {
   security_rule {
     name                       = "Allow-GatewayManager-Ephemeral"
     priority                   = 120
-    direction                  = "Inbound"
+    direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
@@ -47,6 +47,18 @@ resource "azurerm_network_security_group" "web_nsg" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "Allow-AzureLoadBalancer-In"
+    priority                   = 130
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "AzureLoadBalancer"
+    destination_address_prefix = "*"
+  }
+  
   tags = var.tags
 }
 
