@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "time_sleep" "wait_rg" {
-  create_duration = "15s"
+  create_duration = "30s"
 
   depends_on = [azurerm_resource_group.rg]
 }
@@ -33,9 +33,15 @@ module "vnet" {
   dns_servers = var.dns_servers
 }
 
+resource "time_sleep" "wait_vnet" {
+  create_duration = "30s"
+
+  depends_on = [module.vnet]
+}
+
 module "subnets" {
   source     = "./modules/subnets"
-  depends_on = [module.vnet]
+  depends_on = [time_sleep.wait_vnet]
 
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -126,6 +132,8 @@ module "app_service" {
 
 module "certificate" {
   source = "./modules/certificate"
+
+  depends_on = [ module.app_service ]
 
   custom_domain_name                        = var.custom_domain_name
   org_name                                  = var.org_name

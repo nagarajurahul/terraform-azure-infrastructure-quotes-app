@@ -31,7 +31,7 @@ resource "azurerm_network_security_group" "web_nsg" {
   security_rule {
     name                       = "Allow-GatewayManager-Ephemeral"
     priority                   = 120
-    direction                  = "Outbound"
+    direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"

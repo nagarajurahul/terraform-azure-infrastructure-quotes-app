@@ -7,7 +7,11 @@ resource "azurerm_container_registry" "acr" {
   location            = var.location
   tags                = var.tags
   sku                 = var.acr_sku
+
+  # Disable for production
+  public_network_access_enabled = true
   admin_enabled       = false
+  
   # Enable for production
   # zone_redundancy_enabled = true
 }
