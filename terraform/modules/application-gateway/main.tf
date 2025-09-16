@@ -16,6 +16,7 @@ locals {
   redirect_configuration_name    = "${var.vnet_name}-rdrcfg"
 }
 
+# Also integrate this Application Gateway with WAF in Production
 resource "azurerm_application_gateway" "application_gateway" {
   depends_on = [azurerm_role_assignment.appgw_kv_secret_access]
 
@@ -76,7 +77,7 @@ resource "azurerm_application_gateway" "application_gateway" {
     protocol                            = "Https"
     request_timeout                     = 60
     pick_host_name_from_backend_address = false
-    host_name = var.host_name
+    host_name                           = var.host_name
     probe_name                          = "${var.vnet_name}-probe"
   }
 
@@ -111,3 +112,5 @@ resource "azurerm_application_gateway" "application_gateway" {
     backend_http_settings_name = local.http_setting_name
   }
 }
+
+# Enable Monitoring and Logging in Production

@@ -18,12 +18,13 @@ variable "certificate_key_vault_resource_group_name" {
   description = "Name of the key vault - resource group where certificate needs to reside"
 }
 
+variable "tags" {
+  type        = map(string)
+  description = "Custom tags to assign to all resources."
+  default     = {}
+}
+
 variable "project_name" {
   type        = string
   description = "Project name"
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "A map of tags to assign"
 }

@@ -5,12 +5,13 @@ variable "resource_group_name" {
 
 variable "location" {
   type        = string
-  description = "The Azure location where resources will be deployed"
+  description = "The Azure location where resources will be created"
 }
 
 variable "tags" {
   type        = map(string)
-  description = "A map of tags to assign"
+  description = "Custom tags to assign to all resources."
+  default     = {}
 }
 
 variable "project_name" {
@@ -44,15 +45,13 @@ variable "sql_database_sku" {
 variable "key_vault_name" {
   description = "Name of the Key Vault where SQL admin credentials are stored"
   type        = string
-
-  sensitive = true
+  sensitive   = true
 }
 
 variable "key_vault_resource_group_name" {
   description = "The name of the resource group where Key Vault is present"
   type        = string
-
-  sensitive = true
+  sensitive   = true
 }
 
 variable "sql_admin_login_secret_name" {
@@ -70,7 +69,7 @@ variable "vnet_id" {
   type        = string
 }
 
-variable "subnet_id" {
+variable "private_endpoint_subnet_id" {
   description = "Subnet ID where Private Endpoint resides"
   type        = string
 }

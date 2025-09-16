@@ -1,16 +1,7 @@
-resource "azurerm_subnet" "web" {
-  name                 = "web-subnet"
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = [var.subnet_cidrs["web"]]
-}
-
 resource "azurerm_network_security_group" "web_nsg" {
   name                = "web-nsg"
   location            = var.location
   resource_group_name = var.resource_group_name
-
-  depends_on = [azurerm_virtual_network.vnet]
 
   security_rule {
     name                       = "Allow-HTTPS-In"
@@ -40,12 +31,24 @@ resource "azurerm_network_security_group" "web_nsg" {
   security_rule {
     name                       = "Allow-GatewayManager-Ephemeral"
     priority                   = 120
-    direction                  = "Inbound"
+    direction                  = "Outbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "65200-65535"
     source_address_prefix      = "GatewayManager"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow-AzureLoadBalancer-In"
+    priority                   = 130
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "AzureLoadBalancer"
     destination_address_prefix = "*"
   }
 
@@ -55,4 +58,6 @@ resource "azurerm_network_security_group" "web_nsg" {
 resource "azurerm_subnet_network_security_group_association" "web_association" {
   subnet_id                 = azurerm_subnet.web.id
   network_security_group_id = azurerm_network_security_group.web_nsg.id
+
+  depends_on = [azurerm_subnet.web, azurerm_network_security_group.web_nsg]
 }

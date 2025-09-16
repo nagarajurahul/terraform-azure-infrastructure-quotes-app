@@ -44,7 +44,7 @@ Cloud engineering team.
 
 ## 4. Architecture
 
-![Architecture Diagram](./Architecture.png)
+![Architecture Diagram](./others/Architecture.png)
 
 ### 4.1 High-Level Architecture Diagram
 
@@ -124,6 +124,8 @@ Virtual Network with 4 subnets:
   - Replace password authentication with Managed Identity via Azure AD.  
   - For microservice-based services, consider AKS (Azure Kubernetes Service).  
   - Integrate Azure DevOps for streamlined identity & access management.  
+
+Challenges faces while implementation - See [challenges.md](./others/challenges.md) for details.
 
 ---
 

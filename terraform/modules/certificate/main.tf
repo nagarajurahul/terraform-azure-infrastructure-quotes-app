@@ -12,6 +12,7 @@ resource "azurerm_key_vault_certificate" "ssl_cert" {
 
   certificate_policy {
     issuer_parameters {
+      # Only for dev, for production use CA
       name = "Self"
     }
 
