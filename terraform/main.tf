@@ -106,7 +106,7 @@ module "acr" {
   environment         = var.environment
 
   vnet_id      = module.vnet.vnet_id
-  pe_subnet_id = module.subnets.subnet_ids["db"]
+  pe_subnet_id = module.subnets.subnet_ids["pe"]
 }
 
 
@@ -126,7 +126,7 @@ module "app_service" {
 
   web_app_sku_name           = var.web_app_sku_name
   node_version               = var.node_version
-  private_endpoint_subnet_id = module.subnets.subnet_ids["db"]
+  private_endpoint_subnet_id = module.subnets.subnet_ids["pe"]
 
   acr_login_server  = module.acr.acr_login_server
   acr_id            = module.acr.acr_id
