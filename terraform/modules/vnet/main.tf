@@ -11,11 +11,6 @@
 #   }
 # }
 
-# resource "time_sleep" "wait_vnet" {
-#   create_duration = "15s"
-
-#   depends_on = [ azurerm_virtual_network.vnet ]
-# }
 
 locals {
   local_vnet_name = "vnet-${var.project_name}-${var.environment}"
