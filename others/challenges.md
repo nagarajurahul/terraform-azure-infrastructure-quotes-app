@@ -88,3 +88,65 @@ Workarounds / Mitigation:
 - terraform import azurerm_virtual_network.vnet "/subscriptions/<sub_id>/resourceGroups/rg-quotesapp-prod/providers/Microsoft.Network/virtualNetworks/vnet-quotesapp-prod"
 
 - Or, if it was created unintentionally, delete the VNet manually in the Azure portal and re-run terraform apply.
+
+
+
+---
+Error Observed – SQL Server Provisioning Disabled in Region
+```
+│ Error: creating Server (Subscription: "Subscription-ID"
+│ Resource Group Name: "rg-quotesapp-prod"
+│ Server Name: "sqlserver-quotesapp-prod"): polling after CreateOrUpdate: polling failed: the Azure API returned the following error:
+│
+│ Status: "ProvisioningDisabled"
+│ Message: "Provisioning is restricted in this region. Please choose a different region. For exceptions to this rule please open a support request with Issue type of 'Service and subscription limits'."
+```
+
+Notes: This error occurred because SQL Database provisioning was disabled in the selected region for the subscription. Free-tier or sandbox subscriptions often block SQL creation in certain regions to preserve capacity.
+
+Workarounds / Mitigation:
+
+- Deploy SQL Server in a different supported region (e.g., East US, Central US, West Europe).
+- Or, if the region is required, open an Azure support request to request a quota/region exception.
+
+
+---
+Provider error
+```
+│ Error: Provider produced inconsistent result after apply
+│
+│ When applying changes to module.network.azurerm_nat_gateway.nat, provider "provider[\"registry.terraform.io/hashicorp/azurerm\"]" produced an
+│ unexpected new value: Root object was present, but now absent.
+│
+│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
+╵
+╷
+│ Error: Provider produced inconsistent result after apply
+│
+│ When applying changes to module.network.azurerm_subnet.db, provider "provider[\"registry.terraform.io/hashicorp/azurerm\"]" produced an unexpected
+│ new value: Root object was present, but now absent.
+│
+│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
+╵
+Releasing state lock. This may take a few moments...
+```
+
+
+---
+VNet Lock
+```
+module.network.azurerm_virtual_network.vnet: Creating...
+╷
+│ Error: waiting for provisioning state of Virtual Network (Subscription: "Subscription-ID"
+│ Resource Group Name: "rg-quotesapp-prod"
+│ Virtual Network Name: "vnet-quotesapp-prod"): retrieving Virtual Network (Subscription: "Subscription-ID"
+│ Resource Group Name: "rg-quotesapp-prod"
+│ Virtual Network Name: "vnet-quotesapp-prod"): unexpected status 404 (404 Not Found) with error: ResourceNotFound: The Resource 'Microsoft.Network/virtualNetworks/vnet-quotesapp-prod' under resource group 'rg-quotesapp-prod' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+│
+│   with module.network.azurerm_virtual_network.vnet,
+│   on modules/network/main.tf line 1, in resource "azurerm_virtual_network" "vnet":
+│    1: resource "azurerm_virtual_network" "vnet" {
+│
+╵
+Releasing state lock. This may take a few moments...
+```
