@@ -43,11 +43,6 @@ output "sql_database_id" {
   value       = module.sql.sql_database_id
 }
 
-output "sql_database_collation" {
-  description = "The collation of the SQL Database"
-  value       = module.sql.sql_database_collation
-}
-
 output "acr_name" {
   value       = module.acr.acr_name
   description = "The name of the ACR"
@@ -61,11 +56,6 @@ output "acr_login_server" {
 output "acr_id" {
   value       = module.acr.acr_id
   description = "The ID of the ACR"
-}
-
-output "service_plan_id" {
-  description = "The ID of the App Service Plan."
-  value       = module.app_service.service_plan_id
 }
 
 output "service_plan_name" {
@@ -86,4 +76,24 @@ output "webapp_name" {
 output "webapp_default_hostname" {
   description = "The default hostname of the Web App (e.g., webapp.azurewebsites.net)."
   value       = module.app_service.webapp_default_hostname
+}
+
+output "appgateway_public_ip_address" {
+  description = "The public IP address of the Application Gateway"
+  value       = module.application_gateway.appgateway_public_ip_address
+}
+
+output "appgateway_public_ip_fqdn" {
+  description = "The FQDN associated with the Application Gateway Public IP"
+  value       = module.application_gateway.appgateway_public_ip_fqdn
+}
+
+output "application_gateway_id" {
+  description = "The ID of the Application Gateway"
+  value       = module.application_gateway.application_gateway_id
+}
+
+output "application_gateway_name" {
+  description = "The name of the Application Gateway"
+  value       = module.application_gateway.application_gateway_name
 }

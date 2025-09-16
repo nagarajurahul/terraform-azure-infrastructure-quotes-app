@@ -5,12 +5,13 @@ variable "resource_group_name" {
 
 variable "location" {
   type        = string
-  description = "The Azure location where resources will be deployed"
+  description = "The Azure location where resources will be created"
 }
 
 variable "tags" {
   type        = map(string)
-  description = "A map of tags to assign"
+  description = "Custom tags to assign to all resources."
+  default     = {}
 }
 
 variable "project_name" {
@@ -92,6 +93,6 @@ variable "custom_domain_name" {
 }
 
 variable "host_name" {
-  type = string
+  type        = string
   description = "Host name of the backend"
 }
