@@ -2,13 +2,32 @@
 
 ## 1. Summary
 
-**Project Name:** Quotes App – Secure, Highly Available Public Web Application on Azure  
+**Project Name:** Quotes App – Secure, Highly Available Public Web Application with Azure SQL DB on Azure
 
 **Objective:**  
-Build and deploy a public web app that displays random quotes from a database, designed to handle critical PII securely.  
+Design, build, and deploy a public-facing Node.js web application that fetches random quotes from an Azure SQL database, ensuring end-to-end security, compliance, and automation.
 
 **Scope:**  
-End-to-end infrastructure provisioning with Terraform, automation, CI/CD, application delivery, and Azure networking.  
+- Full Infrastructure as Code with Terraform.
+  - Remote state management in Azure Storage with Locks
+  - Structured modules
+  - Reusability across multiple teams/projects
+
+- CI/CD pipeline with GitHub Actions.
+  - Branch protection on production
+  - Merge only after review and approval from senior
+  - Deploy to prod trigerred only multiple approvals
+
+- Secure networking with private endpoints.
+  - Data transimitted internally over private network in Azure
+
+- PII-compliant SQL database.
+
+- TLS, HTTPS, WAF, and Audit 
+  - Encryption at rest and in-transit.
+
+- Key Vault-based secret management.
+  - No Harcoded Secrets
 
 ---
 
@@ -65,7 +84,8 @@ Cloud engineering team.
 Virtual Network with 4 subnets:  
 - Web Subnet (App Gateway)  
 - App Subnet (App Service)  
-- DB Subnet (Private Endpoint)  
+- DB Subnet (Private Endpoint) 
+- PE Endpoint (Other Private Endpoint such as App Service, Vault etc) 
 - Management Subnet (Management VMs)  
 
 ### 5.2 Security
@@ -80,10 +100,11 @@ Virtual Network with 4 subnets:
 ## 6. CI/CD & Automation
 
 ### 6.1 GitHub Actions Workflow
+- **Check Infra Config:** Terraform fmt, validate, plan
 - **Deploy Infra:** Terraform apply.  
 - **Build:** Node.js app containerized and pushed to ACR.  
 - **App Server:** Pulls uploaded container from ACR via Identity.  
-- **Database Seed:** SQL script run via pipeline.  
+- **Database Seed:** SQL seed script run via pipeline.  
 
 ### 6.2 Secrets Management
 - GitHub secrets → Azure Key Vault → Terraform.  
@@ -99,7 +120,7 @@ Virtual Network with 4 subnets:
 ---
 
 ## 8. Best Practices & Standards Applied
-- Infrastructure as Code with Terraform.  
+- Infrastructure as Code with Terraform -> versioned, repeatable.  
 - Network isolation with private endpoints.  
 - Zero hardcoded credentials (Managed Identity + Key Vault).  
 - High availability with App Gateway & App Service scaling.  
@@ -134,6 +155,3 @@ Challenges faces while implementation - See [challenges.md](./others/challenges.
 - GitHub Actions Pipeline YAML  
 - SQL Seed Script  
 - Screenshots of working web app  
-
-
-
