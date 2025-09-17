@@ -1,5 +1,21 @@
 # Assessment Documentation
 
+## Table of Contents
+
+- [1. Summary](#1-summary)
+- [2. Introduction](#2-introduction)
+- [3. Requirements](#3-requirements)
+- [4. Architecture](#4-architecture)
+- [5. Infrastructure Design](#5-infrastructure-design)
+- [6. CI/CD & Automation](#6-cicd--automation)
+- [7. Testing & Validation](#7-testing--validation)
+- [8. Best Practices & Standards Applied](#8-best-practices--standards-applied)
+- [9. Risks & Mitigations](#9-risks--mitigations)
+- [10. Conclusion & Next Steps](#10-conclusion--next-steps)
+- [11. Appendix](#11-appendix)
+- [12. Images & Diagrams (Screenshots)](#12-images--diagrams)
+
+
 ## 1. Summary
 
 **Project Name:** Quotes App – Secure, Highly Available Public Web Application with Azure SQL DB on Azure
@@ -14,9 +30,9 @@ Design, build, and deploy a public-facing Node.js web application that fetches r
   - Reusability across multiple teams/projects
 
 - CI/CD pipeline with GitHub Actions.
-  - Branch protection on production
+  - Branch protection for production branch on production
   - Merge only after review and approval from senior
-  - Deploy to prod trigerred only multiple approvals
+  - Deploy to prod trigerred only after multiple approvals
 
 - Secure networking with private endpoints.
   - Data transimitted internally over private network in Azure
@@ -160,23 +176,33 @@ Challenges faces while implementation - See [challenges.md](./others/challenges.
 
 This section contains reference diagrams and screenshots to illustrate the infrastructure and application setup.
 
-### 5.1 Architecture Diagram
+### 12.1 Architecture Diagram
 
 ![Architecture Diagram](./images/Architecture.png)
 
-### 5.2 CI/CD Workflow
+### 12.2 CI/CD Workflow - GitHub Actions
 
-![CI/CD Workflow](./images/cicd-workflow.png)
+![CI/CD Workflow - GitHub Actions](./images/github-actions.png)
+
+### 12.3 PR - CI/CD validation trigger
+
+![PR with Successful Validate](./images/pr.png)
+
+### 12.4 Git Bot Outputs for CI/CD validation
+
+![Git Bot Outputs](./images/git-bot-output.png)
+
+### 12.12 Terraform Apply
 
 ![Teraform Apply](./images/terraform-apply.png)
 
 ![Terraform Apply - Complete](./images/terraform-apply-complete.png)
 
-### 5.3 Application Screenshot
+### 12.6 Application Screenshot
 
 ![App Screenshot](./images/welcome-page.png)
 
-### 5.4 Random Quotes Screenshot
+### 12.7 Random Quotes Screenshot
 
 ![App Screenshot](./images/random-quotes-1.png)
 
