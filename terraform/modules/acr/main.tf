@@ -10,8 +10,8 @@ resource "azurerm_container_registry" "acr" {
 
   # Disable for production
   public_network_access_enabled = true
-  admin_enabled       = false
-  
+  admin_enabled                 = false
+
   # Enable for production
   # zone_redundancy_enabled = true
 }

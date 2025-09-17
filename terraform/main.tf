@@ -133,7 +133,7 @@ module "app_service" {
 module "certificate" {
   source = "./modules/certificate"
 
-  depends_on = [ module.app_service ]
+  depends_on = [module.app_service]
 
   custom_domain_name                        = var.custom_domain_name
   org_name                                  = var.org_name
