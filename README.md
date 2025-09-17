@@ -63,7 +63,7 @@ Cloud engineering team.
 
 ## 4. Architecture
 
-![Architecture Diagram](./others/Architecture.png)
+![Architecture Diagram](./images/Architecture.png)
 
 ### 4.1 High-Level Architecture Diagram
 
@@ -155,3 +155,29 @@ Challenges faces while implementation - See [challenges.md](./others/challenges.
 - GitHub Actions Pipeline YAML  
 - SQL Seed Script  
 - Screenshots of working web app  
+
+## 12. Images & Diagrams
+
+This section contains reference diagrams and screenshots to illustrate the infrastructure and application setup.
+
+### 5.1 Architecture Diagram
+
+![Architecture Diagram](./images/Architecture.png)
+
+### 5.2 CI/CD Workflow
+
+![CI/CD Workflow](./images/cicd-workflow.png)
+
+![Teraform Apply](./images/terraform-apply.png)
+
+![Terraform Apply - Complete](./images/terraform-apply-complete.png)
+
+### 5.3 Application Screenshot
+
+![App Screenshot](./images/welcome-page.png)
+
+### 5.4 Random Quotes Screenshot
+
+![App Screenshot](./images/random-quotes-1.png)
+
+![App Screenshot](./images/random-quotes-2.png)
