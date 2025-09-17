@@ -12,6 +12,8 @@
 - [8. Best Practices & Standards Applied](#8-best-practices--standards-applied)
 - [9. Risks & Mitigations](#9-risks--mitigations)
 - [10. Conclusion & Next Steps](#10-conclusion--next-steps)
+- [10.1 Future Improvement](#101-future-improvements)
+- [10.2 Challenges faced](#102-challenges-faced-during-project-implementation)
 - [11. Appendix](#11-appendix)
 - [12. Images & Diagrams (Screenshots)](#12-images--diagrams)
 
@@ -153,7 +155,9 @@ Virtual Network with 4 subnets:
 
 ## 10. Conclusion & Next Steps
 - Successfully deployed a production-ready architecture.  
-- **Future Improvements:**  
+
+### 10.1 Future Improvements
+
   - Add monitoring (App Insights, Log Analytics).  
   - Enable autoscaling.  
   - Implement disaster recovery (Geo-replication).  
@@ -161,6 +165,8 @@ Virtual Network with 4 subnets:
   - Replace password authentication with Managed Identity via Azure AD.  
   - For microservice-based services, consider AKS (Azure Kubernetes Service).  
   - Integrate Azure DevOps for streamlined identity & access management.  
+
+### 10.2 Challenges faced during project implementation
 
 Challenges faces while implementation - See [challenges.md](./others/challenges.md) for details.
 

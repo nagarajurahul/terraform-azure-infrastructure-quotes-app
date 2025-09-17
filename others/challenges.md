@@ -1,152 +1,113 @@
-Error Observed – App Service Plan Throttling
+# Challenges Faced During Azure Quotes App Deployment
 
-```
+## 📌 SQL Access in Free Tier
+Due to Azure Free Tier subscription limitations, it was not possible to create a VM in the same region as the App Service and SQL Database.  
+Because of this, I executed the SQL schema creation and seed queries directly via the **Azure SQL Query Console** in the Azure Portal.
+
+### Industry Best Practice
+In a production-grade setup, the recommended approach is to:
+- Create a dedicated **management subnet** within the same VNet.
+- Deploy a **management/jump VM** inside that subnet.
+- Use this VM to securely connect to the SQL Database **Private Endpoint** over **Azure Private Link**.
+- **Disable all public SQL access** for strict PII protection.
+
+This ensures compliance, proper network isolation, and secure access patterns in line with enterprise standards.
+
+---
+
+## 🚨 Error: App Service Plan Throttling
+```hcl
 module.app_service.azurerm_service_plan.service_plan: Still creating... [06m00s elapsed]
 
-│ Error: creating App Service Plan (Subscription: "Subsciption-ID")
-│ Resource Group Name: "rg-quotesapp-prod"
-│ Server Farm Name: "service-plan-quotesapp-prod"):
-│ unexpected status 429 (429 Too Many Requests) with response:
-│ {"Code":"429","Message":"App Service Plan Create operation is throttled for subscription ... Please contact support if issue persists."}
+Error: creating App Service Plan (Subscription: "Subsciption-ID")
+Resource Group Name: "rg-quotesapp-prod"
+Server Farm Name: "service-plan-quotesapp-prod"):
+unexpected status 429 (429 Too Many Requests)
 ```
-
-Notes:
-This happened because the free subscription tier hit throttling limits while creating the App Service Plan. The deployment failed with HTTP 429 Too Many Requests. In a production environment, using a paid subscription with higher quotas or contacting Azure support would prevent this issue.
+**Notes:**  
+This happened because the free subscription tier hit throttling limits while creating the App Service Plan.  
+➡️ **Fix in Production:** Use a paid subscription with higher quotas or contact Azure support.
 
 ---
-Error Observed – App Service Plan Quota Limitation
 
+## 🚨 Error: App Service Plan Quota Limitation
+```hcl
+Error: creating App Service Plan (Subscription: "Subscription-ID"
+Resource Group Name: "rg-quotesapp-prod"
+Server Farm Name: "service-plan-quotesapp-prod"):
+unexpected status 401 (401 Unauthorized)
+Message: "Operation cannot be completed without additional quota. Current Limit (Premium0V3 VMs): 0 ..."
 ```
-│   with module.app_service.azurerm_service_plan.service_plan,
-│   on modules/app-service/main.tf line 1, in resource "azurerm_service_plan" "service_plan":
-│    1: resource "azurerm_service_plan" "service_plan" {
-│
-│ creating App Service Plan (Subscription: "Subscription-ID"
-│ Resource Group Name: "rg-quotesapp-prod"
-│ Server Farm Name: "service-plan-quotesapp-prod"): performing CreateOrUpdate: unexpected status 401 (401 Unauthorized)
-│ with response: {"Code":"Unauthorized","Message":"Operation cannot be completed without additional quota. Current Limit (Premium0V3 VMs): 0 ..."}
-╵
-Releasing state lock. This may take a few moments...
-```
-Notes:
-This error occurred because the subscription had no quota for PremiumV3 App Service Plans (Premium0V3 VMs: 0). The deployment was blocked due to quota restrictions. In production, the fix would be to request a quota increase from Azure or use a lower SKU (e.g., B1/SKU in Standard tier) for testing.
+**Notes:**  
+The subscription had **no quota** for PremiumV3 App Service Plans.  
+➡️ **Fix in Production:** Request a **quota increase** or use a lower SKU (e.g., Standard B1) for testing.
 
 ---
-Error Observed – Provider Inconsistent Result (Virtual Network)
 
+## 🚨 Error: Provider Inconsistent Result (Virtual Network)
+```hcl
+Error: Provider produced inconsistent result after apply
 ```
-module.network.azurerm_virtual_network.vnet: Creating...
-╷
-│ Error: Provider produced inconsistent result after apply
-│
-│ When applying changes to module.network.azurerm_virtual_network.vnet,
-│ provider "registry.terraform.io/hashicorp/azurerm" produced an
-│ unexpected new value: Root object was present, but now absent.
-│
-│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
-╵
-Releasing state lock. This may take a few moments...
-```
-
-Notes:
-This error occurred because of a Terraform AzureRM provider bug, where the state of the azurerm_virtual_network resource became inconsistent after creation. It is not an issue with the configuration itself.
-
-Workarounds / Mitigation:
-
-- Upgraded to the latest version of the AzureRM provider (hashicorp/azurerm).
-
-- Cleaned state and retried deployment using: 
-```
-terraform init -upgrade
-terraform apply
-```
-- For production use, if this persists, raise an issue on the AzureRM provider GitHub tracker
-
-
-
+**Notes:**  
+This was a **Terraform AzureRM provider bug** where the state became inconsistent after creation.  
+➡️ **Mitigation:**  
+- Upgrade AzureRM provider: `terraform init -upgrade`  
+- Retry deployment  
+- If persists, raise issue on AzureRM GitHub
 
 ---
-Error Observed – Resource Already Exists (Virtual Network)
+
+## 🚨 Error: Resource Already Exists (Virtual Network)
+```hcl
+Error: A resource with the ID ".../virtualNetworks/vnet-quotesapp-prod" already exists
 ```
-module.network.azurerm_virtual_network.vnet: Creating...
-╷
-│ Error: A resource with the ID "/subscriptions/subscriptionid/resourceGroups/rg-quotesapp-prod/providers/Microsoft.Network/virtualNetworks/vnet-quotesapp-prod" already exists - to be managed via Terraform this resource needs to be imported into the State. Please see the resource documentation for "azurerm_virtual_network" for more information.
-│
-│   with module.network.azurerm_virtual_network.vnet,
-│   on modules/network/main.tf line 1, in resource "azurerm_virtual_network" "vnet":
-│    1: resource "azurerm_virtual_network" "vnet" {
-╵
-Releasing state lock. This may take a few moments...
-```
-Notes:
-This happened because a Virtual Network with the same name already existed in the resource group before Terraform attempted to create it. Terraform cannot manage existing resources unless they are imported into state.
-
-Workarounds / Mitigation:
-
-- Import the existing VNet into Terraform state:
-
-- terraform import azurerm_virtual_network.vnet "/subscriptions/<sub_id>/resourceGroups/rg-quotesapp-prod/providers/Microsoft.Network/virtualNetworks/vnet-quotesapp-prod"
-
-- Or, if it was created unintentionally, delete the VNet manually in the Azure portal and re-run terraform apply.
-
-
+**Notes:**  
+A VNet with the same name already existed.  
+➡️ **Fix Options:**  
+- Import into Terraform state:  
+  ```bash
+  terraform import azurerm_virtual_network.vnet "/subscriptions/<sub_id>/resourceGroups/rg-quotesapp-prod/providers/Microsoft.Network/virtualNetworks/vnet-quotesapp-prod"
+  ```
+- Or manually delete in Portal and re-run apply.
 
 ---
-Error Observed – SQL Server Provisioning Disabled in Region
+
+## 🚨 Error: SQL Server Provisioning Disabled in Region
+```hcl
+Error: creating Server (Subscription: "Subscription-ID")
+Message: "Provisioning is restricted in this region."
 ```
-│ Error: creating Server (Subscription: "Subscription-ID"
-│ Resource Group Name: "rg-quotesapp-prod"
-│ Server Name: "sqlserver-quotesapp-prod"): polling after CreateOrUpdate: polling failed: the Azure API returned the following error:
-│
-│ Status: "ProvisioningDisabled"
-│ Message: "Provisioning is restricted in this region. Please choose a different region. For exceptions to this rule please open a support request with Issue type of 'Service and subscription limits'."
-```
-
-Notes: This error occurred because SQL Database provisioning was disabled in the selected region for the subscription. Free-tier or sandbox subscriptions often block SQL creation in certain regions to preserve capacity.
-
-Workarounds / Mitigation:
-
-- Deploy SQL Server in a different supported region (e.g., East US, Central US, West Europe).
-- Or, if the region is required, open an Azure support request to request a quota/region exception.
-
+**Notes:**  
+SQL Database provisioning was disabled in that region for free-tier subscriptions.  
+➡️ **Fix in Production:** Deploy in another supported region or request exception from Azure support.
 
 ---
-Provider error
-```
-│ Error: Provider produced inconsistent result after apply
-│
-│ When applying changes to module.network.azurerm_nat_gateway.nat, provider "provider[\"registry.terraform.io/hashicorp/azurerm\"]" produced an
-│ unexpected new value: Root object was present, but now absent.
-│
-│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
-╵
-╷
-│ Error: Provider produced inconsistent result after apply
-│
-│ When applying changes to module.network.azurerm_subnet.db, provider "provider[\"registry.terraform.io/hashicorp/azurerm\"]" produced an unexpected
-│ new value: Root object was present, but now absent.
-│
-│ This is a bug in the provider, which should be reported in the provider's own issue tracker.
-╵
-Releasing state lock. This may take a few moments...
-```
 
+## 🚨 Error: Provider Inconsistent Result (NAT Gateway & Subnet)
+```hcl
+Error: Provider produced inconsistent result after apply
+```
+**Notes:**  
+Again, a Terraform AzureRM provider bug.  
+➡️ **Mitigation:** Upgrade provider and retry.
 
 ---
-VNet Lock
+
+## 🚨 Error: VNet Lock Issue
+```hcl
+Error: waiting for provisioning state of Virtual Network ...
+unexpected status 404 (404 Not Found)
 ```
-module.network.azurerm_virtual_network.vnet: Creating...
-╷
-│ Error: waiting for provisioning state of Virtual Network (Subscription: "Subscription-ID"
-│ Resource Group Name: "rg-quotesapp-prod"
-│ Virtual Network Name: "vnet-quotesapp-prod"): retrieving Virtual Network (Subscription: "Subscription-ID"
-│ Resource Group Name: "rg-quotesapp-prod"
-│ Virtual Network Name: "vnet-quotesapp-prod"): unexpected status 404 (404 Not Found) with error: ResourceNotFound: The Resource 'Microsoft.Network/virtualNetworks/vnet-quotesapp-prod' under resource group 'rg-quotesapp-prod' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
-│
-│   with module.network.azurerm_virtual_network.vnet,
-│   on modules/network/main.tf line 1, in resource "azurerm_virtual_network" "vnet":
-│    1: resource "azurerm_virtual_network" "vnet" {
-│
-╵
-Releasing state lock. This may take a few moments...
-```
+**Notes:**  
+A race condition where the VNet was not found during creation.  
+➡️ **Mitigation:** Retry deployment after cleaning state.
+
+---
+
+# ✅ Summary
+- **Free Tier Limitations:** Prevented creation of critical resources (VM, SQL in region, App Service Plan).  
+- **Quota Restrictions:** Blocked Premium SKUs without quota increases.  
+- **Terraform Bugs:** Caused inconsistent state issues with networking resources.  
+- **Workarounds:** Used Azure SQL Console, retried with provider upgrades, considered imports/deletes for existing resources.
+
+📖 **In Production:** These issues are mitigated by using a **paid subscription**, **requesting quota increases**, **following best practices for network isolation**, and **leveraging support channels for provider/region limitations**.
