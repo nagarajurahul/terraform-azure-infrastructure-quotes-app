@@ -1,14 +1,51 @@
 # Assessment Documentation
 
+## Table of Contents
+
+- [1. Summary](#1-summary)
+- [2. Introduction](#2-introduction)
+- [3. Requirements](#3-requirements)
+- [4. Architecture](#4-architecture)
+- [5. Infrastructure Design](#5-infrastructure-design)
+- [6. CI/CD & Automation](#6-cicd--automation)
+- [7. Testing & Validation](#7-testing--validation)
+- [8. Best Practices & Standards Applied](#8-best-practices--standards-applied)
+- [9. Risks & Mitigations](#9-risks--mitigations)
+- [10. Conclusion & Next Steps](#10-conclusion--next-steps)
+- [10.1 Future Improvement](#101-future-improvements)
+- [10.2 Challenges faced](#102-challenges-faced-during-project-implementation)
+- [11. Appendix](#11-appendix)
+- [12. Images & Diagrams (Screenshots)](#12-images--diagrams)
+
+
 ## 1. Summary
 
-**Project Name:** Quotes App – Secure, Highly Available Public Web Application on Azure  
+**Project Name:** Quotes App – Secure, Highly Available Public Web Application with Azure SQL DB on Azure
 
 **Objective:**  
-Build and deploy a public web app that displays random quotes from a database, designed to handle critical PII securely.  
+Design, build, and deploy a public-facing Node.js web application that fetches random quotes from an Azure SQL database, ensuring end-to-end security, compliance, and automation.
 
 **Scope:**  
-End-to-end infrastructure provisioning with Terraform, automation, CI/CD, application delivery, and Azure networking.  
+- Full Infrastructure as Code with Terraform.
+  - Remote state management in Azure Storage with Locks
+  - Structured modules
+  - Reusability across multiple teams/projects
+
+- CI/CD pipeline with GitHub Actions.
+  - Branch protection for production branch on production
+  - Merge only after review and approval from senior
+  - Deploy to prod trigerred only after multiple approvals
+
+- Secure networking with private endpoints.
+  - Data transimitted internally over private network in Azure
+
+- PII-compliant SQL database.
+
+- TLS, HTTPS, WAF, and Audit 
+  - Encryption at rest and in-transit.
+
+- Key Vault-based secret management.
+  - No Harcoded Secrets
 
 ---
 
@@ -44,7 +81,7 @@ Cloud engineering team.
 
 ## 4. Architecture
 
-![Architecture Diagram](./others/Architecture.png)
+![Architecture Diagram](./images/Architecture.png)
 
 ### 4.1 High-Level Architecture Diagram
 
@@ -65,7 +102,8 @@ Cloud engineering team.
 Virtual Network with 4 subnets:  
 - Web Subnet (App Gateway)  
 - App Subnet (App Service)  
-- DB Subnet (Private Endpoint)  
+- DB Subnet (Private Endpoint) 
+- PE Endpoint (Other Private Endpoint such as App Service, Vault etc) 
 - Management Subnet (Management VMs)  
 
 ### 5.2 Security
@@ -80,10 +118,11 @@ Virtual Network with 4 subnets:
 ## 6. CI/CD & Automation
 
 ### 6.1 GitHub Actions Workflow
+- **Check Infra Config:** Terraform fmt, validate, plan
 - **Deploy Infra:** Terraform apply.  
 - **Build:** Node.js app containerized and pushed to ACR.  
 - **App Server:** Pulls uploaded container from ACR via Identity.  
-- **Database Seed:** SQL script run via pipeline.  
+- **Database Seed:** SQL seed script run via pipeline.  
 
 ### 6.2 Secrets Management
 - GitHub secrets → Azure Key Vault → Terraform.  
@@ -99,7 +138,7 @@ Virtual Network with 4 subnets:
 ---
 
 ## 8. Best Practices & Standards Applied
-- Infrastructure as Code with Terraform.  
+- Infrastructure as Code with Terraform -> versioned, repeatable.  
 - Network isolation with private endpoints.  
 - Zero hardcoded credentials (Managed Identity + Key Vault).  
 - High availability with App Gateway & App Service scaling.  
@@ -116,7 +155,9 @@ Virtual Network with 4 subnets:
 
 ## 10. Conclusion & Next Steps
 - Successfully deployed a production-ready architecture.  
-- **Future Improvements:**  
+
+### 10.1 Future Improvements
+
   - Add monitoring (App Insights, Log Analytics).  
   - Enable autoscaling.  
   - Implement disaster recovery (Geo-replication).  
@@ -124,6 +165,8 @@ Virtual Network with 4 subnets:
   - Replace password authentication with Managed Identity via Azure AD.  
   - For microservice-based services, consider AKS (Azure Kubernetes Service).  
   - Integrate Azure DevOps for streamlined identity & access management.  
+
+### 10.2 Challenges faced during project implementation
 
 Challenges faces while implementation - See [challenges.md](./others/challenges.md) for details.
 
@@ -135,5 +178,38 @@ Challenges faces while implementation - See [challenges.md](./others/challenges.
 - SQL Seed Script  
 - Screenshots of working web app  
 
+## 12. Images & Diagrams
 
+This section contains reference diagrams and screenshots to illustrate the infrastructure and application setup.
 
+### 12.1 Architecture Diagram
+
+![Architecture Diagram](./images/Architecture.png)
+
+### 12.2 CI/CD Workflow - GitHub Actions
+
+![CI/CD Workflow - GitHub Actions](./images/github-actions.png)
+
+### 12.3 PR - CI/CD validation trigger
+
+![PR with Successful Validate](./images/pr.png)
+
+### 12.4 Git Bot Outputs for CI/CD validation
+
+![Git Bot Outputs](./images/git-bot-output.png)
+
+### 12.12 Terraform Apply
+
+![Teraform Apply](./images/terraform-apply.png)
+
+![Terraform Apply - Complete](./images/terraform-apply-complete.png)
+
+### 12.6 Application Screenshot
+
+![App Screenshot](./images/welcome-page.png)
+
+### 12.7 Random Quotes Screenshot
+
+![App Screenshot](./images/random-quotes-1.png)
+
+![App Screenshot](./images/random-quotes-2.png)
