@@ -26,8 +26,77 @@ env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
   KEY_VAULT_NAME: ${{ secrets.KEY_VAULT_NAME }}
+  TERRAFORM_VERSION: 1.13.3
 
 jobs:
+
+  lint-and-security-scan:
+    name: "Lint and Security Scan"
+    runs-on: ubuntu-24.04
+    environment: production
+    defaults:
+      run:
+        shell: bash
+        # We keep Terraform files in the terraform directory.
+        working-directory: ./terraform
+
+    steps:
+
+    - name: Checkout the repository to the runner
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform with specified version on the runner
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${TERRAFORM_VERSION}
+
+    - uses: terraform-linters/setup-tflint@v5
+      name: Setup TFLint
+      with:
+        tflint_version: v0.52.0
+
+    - name: Init TFLint
+      run: tflint --init
+
+
+    # Terraform Linting
+    # https://github.com/terraform-linters/setup-tflin
+
+    - name: Run TFLint
+      run: tflint -f compact --recursive
+      continue-on-error: true
+
+    - name: Terraform fmt
+      id: fmt
+      run: terraform fmt -check -recursive
+      continue-on-error: true
+
+
+    # Checkov - Code Security Scanning
+    # https://www.checkov.io/4.Integrations/GitHub%20Actions.html
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+
+    - name: Test with Checkov
+      id: checkov
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: terraform
+        framework: terraform
+
+    - name: Upload Checkov results to Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: checkov-results
+        path: results.sarif
+
+    - name: Upload Checkov results to GitHub Security Tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: results.sarif
 
   terraform-plan:
     name: "Terraform Plan"
@@ -40,39 +109,17 @@ jobs:
         working-directory: ./terraform
 
     steps:
+
     - name: Checkout the repository to the runner
       uses: actions/checkout@v4
-
-    - name: Debug env variable
-      run: echo "Debug env variable is ${{ secrets.DEBUG_ENV_VARIABLE }}"
 
     - name: Setup Terraform with specified version on the runner
       uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: 1.13.3
+        terraform_version: ${TERRAFORM_VERSION}
 
-    # Terraform Linting
-    # https://github.com/terraform-linters/setup-tflint
 
-    - uses: terraform-linters/setup-tflint@v5
-      name: Setup TFLint
-      with:
-        tflint_version: v0.52.0
-
-    - name: Show TFLint version
-      run: tflint --version
-
-    - name: Init TFLint
-      run: tflint --init
-
-    - name: Run TFLint
-      run: tflint -f compact --recursive
-      continue-on-error: true
-
-    - name: Terraform fmt
-      id: fmt
-      run: terraform fmt -check -recursive
-      continue-on-error: true
+    # Azure setup
 
     - name: Azure Login
       uses: azure/login@v2
@@ -104,6 +151,9 @@ jobs:
         echo "certificate_key_vault_resource_group_name = \"${{ secrets.CERTIFICATE_KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
         echo "identity_resource_group_name = \"${{ secrets.IDENTITY_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
 
+
+    # Terraform commands
+
     - name: Terraform Init
       id: init
       run: terraform init -backend-config=backend-config.hcl
@@ -111,33 +161,6 @@ jobs:
     - name: Terraform Validate
       id: validate
       run: terraform validate -no-color
-
-    # Checkov - Code Security Scanning
-    # https://www.checkov.io/4.Integrations/GitHub%20Actions.html
-
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.8
-   
-    - name: Test with Checkov
-      id: checkov
-      uses: bridgecrewio/checkov-action@master
-      with:
-        directory: terraform
-        framework: terraform
-
-    - name: Upload Checkov results to Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: checkov-results
-        path: results.sarif
-
-    - name: Upload Checkov results to GitHub Security Tab
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: results.sarif
-    
 
     - name: Terraform Plan
       id: plan
@@ -154,6 +177,9 @@ jobs:
       with:
         name: tfplan
         path: terraform/tfplan
+
+
+    # Output on PR
 
     - uses: actions/github-script@v7
       if: github.event_name == 'pull_request'
@@ -197,7 +223,7 @@ jobs:
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
-# Use this with peer review -> approval -> Then only push in production
+  # Use this with peer review -> approval -> Then only push in production
 
   # terraform-apply:
   #   name: "Terraform Apply"
