@@ -244,8 +244,6 @@ jobs:
     environment: production
     needs: terraform-plan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.terraform-plan.outputs.exitcode == '2'
-    environment:
-      name: production
     defaults:
       run:
         shell: bash
