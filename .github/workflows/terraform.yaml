@@ -111,6 +111,21 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
+    # Checkov - Code Security Scanning
+    # https://www.checkov.io/4.Integrations/GitHub%20Actions.html
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
+   
+    - name: Test with Checkov
+      id: checkov
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: terraform
+        framework: terraform
+
     - name: Terraform Plan
       id: plan
       run: |
