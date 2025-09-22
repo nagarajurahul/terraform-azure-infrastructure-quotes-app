@@ -168,12 +168,17 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: |
+        set +e
         terraform plan \
+          -detailed-exitcode \
           -no-color \
           -input=false \
           -var-file=env/prod.tfvars \
           -var-file=terraform.tfvars \
           -out=tfplan
+        exitcode=$?
+        echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+        set -e
 
     - name: Upload Terraform Plan artifact
       uses: actions/upload-artifact@v4
@@ -221,16 +226,23 @@ jobs:
             body: output
           })
 
-    - name: Terraform Plan Status
-      if: steps.plan.outcome == 'failure'
-      run: exit 1
+    - name: Check if changes exist
+      run: |
+        if [ "${{ steps.plan.outputs.exitcode }}" -eq 0 ]; then
+          echo "✅ No changes in infrastructure."
+        elif [ "${{ steps.plan.outputs.exitcode }}" -eq 2 ]; then
+          echo "⚠️ Infrastructure changes detected."
+        else
+          echo "❌ Terraform plan failed."
+          exit 1
+        fi
   # Use this with peer review -> approval -> Then only push in production
 
   terraform-apply:
     name: "Terraform Apply"
     runs-on: ubuntu-24.04
     needs: terraform-plan
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.terraform-plan.outputs.exitcode == '2'
     environment:
       name: production
     defaults:
