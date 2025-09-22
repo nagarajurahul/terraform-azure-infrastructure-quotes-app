@@ -1,5 +1,3 @@
-data "azurerm_client_config" "current" {}
-
 data "azurerm_key_vault" "key_vault" {
   name                = var.certificate_key_vault_name
   resource_group_name = var.certificate_key_vault_resource_group_name

@@ -29,8 +29,7 @@ module "vnet" {
   project_name        = var.project_name
   environment         = var.environment
 
-  vnet_cidr   = var.vnet_cidr
-  dns_servers = var.dns_servers
+  vnet_cidr = var.vnet_cidr
 }
 
 resource "time_sleep" "wait_vnet" {
@@ -114,7 +113,6 @@ module "app_service" {
   subnet_id = module.subnets.subnet_ids["app"]
 
   web_app_sku_name           = var.web_app_sku_name
-  node_version               = var.node_version
   private_endpoint_subnet_id = module.subnets.subnet_ids["pe"]
 
   acr_login_server  = module.acr.acr_login_server

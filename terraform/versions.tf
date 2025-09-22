@@ -8,7 +8,11 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.1.0"
     }
+    time = {
+      source  = "hashicorp/time"
+      version = "0.13.1"
+    }
   }
 
-  required_version = "~> 1.1.9"
+  required_version = "~> 1.13.3"
 }

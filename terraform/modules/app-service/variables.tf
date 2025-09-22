@@ -40,11 +40,6 @@ variable "web_app_sku_name" {
   default     = "P5mv4"
 }
 
-variable "node_version" {
-  type        = string
-  description = "Node version for the Web App"
-}
-
 variable "private_endpoint_subnet_id" {
   type        = string
   description = "Private Endpoint Subnet ID"
