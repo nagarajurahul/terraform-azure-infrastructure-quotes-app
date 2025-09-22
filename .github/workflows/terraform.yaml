@@ -50,6 +50,11 @@ jobs:
       with:
         terraform_version: 1.13.2
 
+    - name: Lint Terraform code
+      run: |
+        tflint --init
+        tflint
+
     - name: Azure Login
       uses: azure/login@v2
       with:
