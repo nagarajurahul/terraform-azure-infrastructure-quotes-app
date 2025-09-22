@@ -58,7 +58,6 @@ jobs:
     - name: Init TFLint
       run: tflint --init
 
-
     # Terraform Linting
     # https://github.com/terraform-linters/setup-tflin
 
@@ -70,7 +69,6 @@ jobs:
       id: fmt
       run: terraform fmt -check -recursive
       continue-on-error: true
-
 
     # Checkov - Code Security Scanning
     # https://www.checkov.io/4.Integrations/GitHub%20Actions.html
@@ -106,8 +104,7 @@ jobs:
       uses: aquasecurity/tfsec-action@v1.0.0
       with:
         working-directory: terraform
-        soft_fail: true      # Never do this in production
-
+        soft_fail: true # Never do this in production
 
   terraform-plan:
     name: "Terraform Plan"
@@ -128,7 +125,6 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${TERRAFORM_VERSION}
-
 
     # Azure setup
 
@@ -162,7 +158,6 @@ jobs:
         echo "certificate_key_vault_resource_group_name = \"${{ secrets.CERTIFICATE_KEY_VAULT_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
         echo "identity_resource_group_name = \"${{ secrets.IDENTITY_RESOURCE_GROUP_NAME }}\"" >> terraform.tfvars
 
-
     # Terraform commands
 
     - name: Terraform Init
@@ -188,7 +183,6 @@ jobs:
       with:
         name: tfplan
         path: terraform/tfplan
-
 
     # Output on PR
 
@@ -233,7 +227,6 @@ jobs:
     - name: Terraform Plan Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
-
   # Use this with peer review -> approval -> Then only push in production
 
   # terraform-apply:
