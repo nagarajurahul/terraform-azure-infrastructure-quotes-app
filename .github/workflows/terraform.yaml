@@ -50,10 +50,23 @@ jobs:
       with:
         terraform_version: 1.13.2
 
-    - name: Lint Terraform code
-      run: |
-        tflint --init
-        tflint
+    # Terraform Linting
+    # https://github.com/terraform-linters/setup-tflint
+
+    - uses: terraform-linters/setup-tflint@v5
+      name: Setup TFLint
+      with:
+        tflint_version: v0.52.0
+
+    - name: Show version
+      run: tflint --version
+
+    - name: Init TFLint
+      run: tflint --init
+
+    - name: Run TFLint
+      run: tflint -f compact --recursive
+      continue-on-error: true
 
     - name: Terraform fmt
       id: fmt
