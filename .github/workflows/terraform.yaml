@@ -173,6 +173,7 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: |
+        set +e   # disable immediate exit
         terraform plan \
           -detailed-exitcode \
           -no-color \
@@ -180,7 +181,11 @@ jobs:
           -var-file=env/prod.tfvars \
           -var-file=terraform.tfvars \
           -out=tfplan
-        echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+        exitcode=$?
+        echo "exit_code=$exitcode" >> "$GITHUB_OUTPUT"
+        cat "$GITHUB_OUTPUT"
+        set -e   # restore fail-fast mode
+
 
     - name: Upload Terraform Plan artifact
       uses: actions/upload-artifact@v4
