@@ -18,9 +18,9 @@ env:
   # verbosity setting for Terraform logs
   TF_LOG: INFO
   # Credentials for deployment to Azure
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
+  # ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  # ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  # ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID}}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID}}
   KEY_VAULT_NAME: ${{ secrets.KEY_VAULT_NAME }}
   # Terraform version
@@ -31,6 +31,7 @@ jobs:
   lint-and-security-scan:
     name: "Lint and Security Scan"
     runs-on: ubuntu-24.04
+    environment: production
     defaults:
       run:
         shell: bash
@@ -106,6 +107,7 @@ jobs:
   terraform-plan:
     name: "Terraform Plan"
     runs-on: ubuntu-24.04
+    environment: production
     needs: lint-and-security-scan
     defaults:
       run:
@@ -168,7 +170,6 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: |
-        set +e
         terraform plan \
           -detailed-exitcode \
           -no-color \
@@ -176,9 +177,7 @@ jobs:
           -var-file=env/prod.tfvars \
           -var-file=terraform.tfvars \
           -out=tfplan
-        exitcode=$?
-        echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
-        set -e
+        echo "exit_code=$?" >> "$GITHUB_OUTPUT"
 
     - name: Upload Terraform Plan artifact
       uses: actions/upload-artifact@v4
@@ -228,19 +227,21 @@ jobs:
 
     - name: Check if changes exist
       run: |
-        if [ "${{ steps.plan.outputs.exitcode }}" -eq 0 ]; then
+        if [ "${{ steps.plan.outputs.exit_code }}" -eq 0 ]; then
           echo "✅ No changes in infrastructure."
-        elif [ "${{ steps.plan.outputs.exitcode }}" -eq 2 ]; then
+        elif [ "${{ steps.plan.outputs.exit_code }}" -eq 2 ]; then
           echo "⚠️ Infrastructure changes detected."
         else
           echo "❌ Terraform plan failed."
           exit 1
         fi
+
   # Use this with peer review -> approval -> Then only push in production
 
   terraform-apply:
     name: "Terraform Apply"
     runs-on: ubuntu-24.04
+    environment: production
     needs: terraform-plan
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' && needs.terraform-plan.outputs.exitcode == '2'
     environment:
