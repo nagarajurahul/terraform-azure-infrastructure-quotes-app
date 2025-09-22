@@ -182,7 +182,7 @@ jobs:
           -var-file=terraform.tfvars \
           -out=tfplan
         exitcode=$?
-        echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+        echo "exit_code=$exitcode" >> $GITHUB_OUTPUT
         set -e
 
     - name: Upload Terraform Plan artifact
