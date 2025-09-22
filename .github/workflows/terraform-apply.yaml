@@ -177,7 +177,6 @@ jobs:
           -var-file=env/prod.tfvars \
           -var-file=terraform.tfvars \
           -out=tfplan
-        echo "exit_code=$?" >> "$GITHUB_OUTPUT"
 
     - name: Upload Terraform Plan artifact
       uses: actions/upload-artifact@v4
@@ -224,17 +223,6 @@ jobs:
             repo: context.repo.repo,
             body: output
           })
-
-    - name: Check if changes exist
-      run: |
-        if [ "${{ steps.plan.outputs.exit_code }}" -eq 0 ]; then
-          echo "✅ No changes in infrastructure."
-        elif [ "${{ steps.plan.outputs.exit_code }}" -eq 2 ]; then
-          echo "⚠️ Infrastructure changes detected."
-        else
-          echo "❌ Terraform plan failed."
-          exit 1
-        fi
 
   # Use this with peer review -> approval -> Then only push in production
 
