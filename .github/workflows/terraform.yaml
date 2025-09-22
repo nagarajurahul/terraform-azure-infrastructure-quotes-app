@@ -181,9 +181,8 @@ jobs:
           -var-file=env/prod.tfvars \
           -var-file=terraform.tfvars \
           -out=tfplan
-        exitcode=$?
+        echo "exit_code=$?" >> "$GITHUB_OUTPUT"
         set -e
-        echo "exit_code=$exitcode" >> "$GITHUB_OUTPUT"
         cat "$GITHUB_OUTPUT"
 
 
