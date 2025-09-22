@@ -162,11 +162,11 @@ variable "identity_resource_group_name" {
   description = "Name of the resource group where identity resides"
 }
 
-variable "key_vault_ssl_certificate_secret_name" {
-  type        = string
-  description = "Secret name in Key Vault where certificate resides"
-  default     = ""
-}
+# variable "key_vault_ssl_certificate_secret_name" {
+#   type        = string
+#   description = "Secret name in Key Vault where certificate resides"
+#   default     = ""
+# }
 
 variable "docker_image_name" {
   type        = string

@@ -19,12 +19,6 @@ variable "vnet_cidr" {
   description = "CIDR block for the Virtual Network (e.g., 10.0.0.0/16)."
 }
 
-variable "dns_servers" {
-  type        = list(string)
-  description = "Optional list of DNS servers to use for the VNet."
-  default     = []
-}
-
 variable "project_name" {
   type        = string
   description = "Project name (used for resource naming)."
