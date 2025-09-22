@@ -28,6 +28,7 @@ env:
   KEY_VAULT_NAME: ${{ secrets.KEY_VAULT_NAME }}
 
 jobs:
+
   terraform-plan:
     name: "Terraform Plan"
     runs-on: ubuntu-24.04
@@ -58,7 +59,7 @@ jobs:
       with:
         tflint_version: v0.52.0
 
-    - name: Show version
+    - name: Show TFLint version
       run: tflint --version
 
     - name: Init TFLint
@@ -134,7 +135,6 @@ jobs:
           -input=false \
           -var-file=env/prod.tfvars \
           -var-file=terraform.tfvars
-      continue-on-error: true
 
     - uses: actions/github-script@v7
       if: github.event_name == 'pull_request'
