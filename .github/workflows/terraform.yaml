@@ -109,6 +109,7 @@ jobs:
   terraform-plan:
     name: "Terraform Plan"
     runs-on: ubuntu-24.04
+    needs: lint-and-security-scan
     environment: production
     defaults:
       run:
