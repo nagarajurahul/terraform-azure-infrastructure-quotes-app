@@ -55,16 +55,16 @@ jobs:
         tflint --init
         tflint
 
+    - name: Terraform fmt
+      id: fmt
+      run: terraform fmt -check -recursive
+      continue-on-error: true
+
     - name: Azure Login
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true
-
-    - name: Terraform fmt
-      id: fmt
-      run: terraform fmt -check
-      continue-on-error: true
 
     - name: Write backend config
       run: |
